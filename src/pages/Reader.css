@@ -1,0 +1,72 @@
+/* Viewport reading area */
+.reader-page {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+/* Wraps the text */
+.reader-container {
+  width: 100%;
+  max-width: 900px;
+  padding: 40px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 32px;
+}
+
+/* Reader text */
+.reader-text {
+  font-size: 20px;
+  line-height: 30px;
+  color: #101010;
+  text-align: left;
+  max-height: calc(100vh - 160px);
+  overflow: hidden;
+}
+
+/* For the next/prev reader navigation */
+.reader-link {
+  color: #0066ff;
+  text-decoration: none;
+}
+
+.reader-link:hover {
+  text-decoration: underline;
+}
+
+
+/* Footer with progress and next/prev buttons */
+.reader-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.reader-progress {
+  font-size: 14px;
+  color: #666;
+}
+
+/* For reader navigation buttons (next/prev/finish) */
+.reader-next {
+  font-size: 16px;
+  padding: 10px 16px;
+  background: transparent;
+  color: #0066ff;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.reader-next:hover {
+  text-decoration: underline;
+}
+
+/* Button press effect */
+.reader-next:active {
+  transform: translateY(1px);
+}
