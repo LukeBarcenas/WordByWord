@@ -1,0 +1,50 @@
+// Here we manage the setting in the reader
+
+import { useEffect, useReducer } from "react";
+
+const STORAGE_KEY = "reader_settings";
+
+const initialState = {
+  readMode: false,
+  // add more stuff here later
+};
+
+// Reducer to manage settings state
+function reducer(state, action) {
+  switch (action.type) {
+    case "SET_READ_MODE":
+      return { ...state, readMode: action.value };
+    case "TOGGLE_READ_MODE":
+      return { ...state, readMode: !state.readMode };
+
+    default:
+      return state;
+  }
+}
+
+// Custom hook to use reader settings
+export function useReaderSettings() {
+  const [state, dispatch] = useReducer(reducer, initialState, (base) => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? { ...base, ...JSON.parse(raw) } : base;
+    } catch {
+      return base;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {}
+  }, [state]);
+
+  const setReadMode = (value) => dispatch({ type: "SET_READ_MODE", value });
+  const toggleReadMode = () => dispatch({ type: "TOGGLE_READ_MODE" });
+
+  return {
+    settings: state,
+    setReadMode,
+    toggleReadMode,
+  };
+}
