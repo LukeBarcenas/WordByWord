@@ -3,7 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import "../pages/Reader.css";
 
-export default function ReaderSettings({ readMode, onToggleReadMode }) {
+export default function ReaderSettings({
+  readMode,
+  onToggleReadMode,
+  focusLine,
+  onToggleFocusLine,
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -51,6 +56,27 @@ export default function ReaderSettings({ readMode, onToggleReadMode }) {
               />
               Read mode
             </label>
+
+            <div
+              className={`settings-subgroup ${
+                readMode ? "" : "is-disabled"
+              }`}
+            >
+              <label
+                className="settings-item nested"
+                role="menuitemcheckbox"
+                aria-checked={focusLine ? "true" : "false"}
+              >
+                <input
+                  type="checkbox"
+                  className="settings-checkbox"
+                  checked={focusLine}
+                  onChange={onToggleFocusLine}
+                  disabled={!readMode}
+                />
+                Focus current line
+              </label>
+            </div>
           </div>
         )}
       </div>

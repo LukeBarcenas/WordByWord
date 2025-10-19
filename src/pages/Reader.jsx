@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import "../pages/Reader.css";
 import ReaderSettingsMenu from "../components/ReaderSettingsMenu";
-import { ReaderSettings } from "../settings/ReaderSettings";
-import "./Reader.css";
+import { ReaderSettings as useReaderSettings } from "../settings/ReaderSettings";
 
 // Splits text into 100 word chunks, rounded to the nearest end of a sentence
 function splitIntoChunks(text, maxWords = 100) {
@@ -73,7 +72,7 @@ export default function Reader() {
   const [page, setPage] = useState(0);
 
   // Settings management
-  const { settings, setReadMode, toggleReadMode } = ReaderSettings();
+  const { settings, setReadMode, toggleReadMode, toggleFocusLine } = useReaderSettings();
 
   // Word read mode's current highlighted word index (null if not in read mode)
   const [wordIndex, setWordIndex] = useState(null);
@@ -93,7 +92,7 @@ export default function Reader() {
     };
   }, []);
 
-  // When the page or read mode changes, reset the word index
+  // When page changes, reset/init highlight based on readMode
   useEffect(() => {
     if (settings.readMode && words.length > 0) {
       setWordIndex(0);
@@ -102,8 +101,48 @@ export default function Reader() {
     }
   }, [page, settings.readMode, words.length]);
 
+  // If read mode is turned off while focus line is still on, turn focus line off too
   useEffect(() => {
-    // Right arrow on keyboard goes to next page
+    if (!settings.readMode && settings.focusLine) {
+      toggleFocusLine();
+    }
+  }, [settings.readMode, settings.focusLine, toggleFocusLine]);
+
+  // Gray out non-current lines
+  const textRef = useRef(null);
+  const wordRefs = useRef([]);
+  const [currentLineTop, setCurrentLineTop] = useState(null);
+
+  // Make ref array match words length
+  useEffect(() => {
+    wordRefs.current = new Array(words.length);
+  }, [words.length]);
+
+  useEffect(() => {
+    if (!settings.readMode || !settings.focusLine) {
+      setCurrentLineTop(null);
+      return;
+    }
+    function measure() {
+      const activeEl = wordIndex !== null ? wordRefs.current[wordIndex] : null;
+      if (!activeEl) {
+        setCurrentLineTop(null);
+        return;
+      }
+      const top = Math.round(activeEl.getBoundingClientRect().top);
+      setCurrentLineTop(top);
+    }
+    measure();
+    window.addEventListener("resize", measure);
+    const id = setInterval(measure, 200);
+    return () => {
+      window.removeEventListener("resize", measure);
+      clearInterval(id);
+    };
+  }, [settings.readMode, settings.focusLine, wordIndex, page, words.length]);
+
+  // Right arrow on keyboard goes to next page
+  useEffect(() => {
     function onKey(e) {
       if (e.key === "ArrowRight") {
         e.preventDefault();
@@ -111,7 +150,6 @@ export default function Reader() {
         return;
       }
 
-      // Pressing space turns on word read mode
       if (e.code === "Space") {
         e.preventDefault();
 
@@ -132,6 +170,7 @@ export default function Reader() {
           // Checks if its at the end of the page. If so, go to next page
           if (page < chunks.length - 1) {
             setPage((p) => p + 1);
+            // Automatically start read mode on next page if possible
           } else {
             sessionStorage.removeItem("reader_text");
             navigate("/");
@@ -161,20 +200,44 @@ export default function Reader() {
   return (
     <div className="reader-page">
       <div className="reader-container" role="region" aria-label="Reading panel" aria-live="polite">
-        <ReaderSettingsMenu readMode={settings.readMode} onToggleReadMode={toggleReadMode} />
+        <ReaderSettingsMenu
+          readMode={settings.readMode}
+          onToggleReadMode={toggleReadMode}
+          focusLine={settings.focusLine}
+          onToggleFocusLine={toggleFocusLine}
+        />
 
-        <div className="reader-text" key={page}>
-          {settings.readMode && words.length > 0
-            ? words.map((w, idx) => (
-                <span
-                  key={idx}
-                  className={`reader-word${wordIndex === idx ? " is-active" : ""}`}
-                >
-                  {w}
-                  {idx < words.length - 1 ? " " : ""}
-                </span>
-              ))
-            : chunks[page]}
+        <div className="reader-text-wrap">
+          <div className="reader-text" key={page} ref={textRef}>
+            {settings.readMode && words.length > 0
+              ? words.map((w, idx) => {
+                  let dim = false;
+                  if (settings.focusLine && currentLineTop !== null) {
+                    const el = wordRefs.current[idx];
+                    if (el) {
+                      const t = Math.round(el.getBoundingClientRect().top);
+                      const topOfLine = 2;
+                      dim = Math.abs(t - currentLineTop) > topOfLine;
+                    }
+                  }
+                  const classes =
+                    "reader-word" +
+                    (wordIndex === idx ? " is-active" : "") +
+                    (dim ? " is-dim" : "");
+
+                  return (
+                    <span
+                      key={idx}
+                      ref={(node) => (wordRefs.current[idx] = node)}
+                      className={classes}
+                    >
+                      {w}
+                      {idx < words.length - 1 ? " " : ""}
+                    </span>
+                  );
+                })
+              : chunks[page]}
+          </div>
         </div>
 
         <div className="reader-footer">
