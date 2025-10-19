@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
+import "../pages/Reader.css";
+import ReaderSettingsMenu from "../components/ReaderSettingsMenu";
+import { ReaderSettings } from "../settings/ReaderSettings";
 import "./Reader.css";
 
 // Splits text into 100 word chunks, rounded to the nearest end of a sentence
@@ -69,6 +72,18 @@ export default function Reader() {
   const chunks = useMemo(() => splitIntoChunks(text, 100), [text]);
   const [page, setPage] = useState(0);
 
+  // Settings management
+  const { settings, setReadMode, toggleReadMode } = ReaderSettings();
+
+  // Word read mode's current highlighted word index (null if not in read mode)
+  const [wordIndex, setWordIndex] = useState(null);
+
+  // Get words for the current chunk
+  const words = useMemo(() => {
+    const current = chunks[page] ?? "";
+    return current.length ? current.split(/\s+/) : [];
+  }, [chunks, page]);
+
   // Prevent scrolling so page is easier to consume for the reader
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
@@ -78,17 +93,56 @@ export default function Reader() {
     };
   }, []);
 
-  // Right arrow on keyboard goes to next page
+  // When the page or read mode changes, reset the word index
   useEffect(() => {
+    if (settings.readMode && words.length > 0) {
+      setWordIndex(0);
+    } else {
+      setWordIndex(null);
+    }
+  }, [page, settings.readMode, words.length]);
+
+  useEffect(() => {
+    // Right arrow on keyboard goes to next page
     function onKey(e) {
       if (e.key === "ArrowRight") {
         e.preventDefault();
         handleNext();
+        return;
+      }
+
+      // Pressing space turns on word read mode
+      if (e.code === "Space") {
+        e.preventDefault();
+
+        // Start at first word if not already in read mode
+        if (!settings.readMode) {
+          if (words.length > 0) {
+            setReadMode(true);
+            setWordIndex(0);
+          }
+          return;
+        }
+
+        // Moving to next words
+        const nextIdx = (wordIndex ?? -1) + 1;
+        if (nextIdx < words.length) {
+          setWordIndex(nextIdx);
+        } else {
+          // Checks if its at the end of the page. If so, go to next page
+          if (page < chunks.length - 1) {
+            setPage((p) => p + 1);
+          } else {
+            sessionStorage.removeItem("reader_text");
+            navigate("/");
+          }
+        }
       }
     }
+
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [page, chunks.length]);
+  }, [page, chunks.length, wordIndex, words.length, settings.readMode]);
 
   // When text ends, go back to home
   function handleNext() {
@@ -107,8 +161,20 @@ export default function Reader() {
   return (
     <div className="reader-page">
       <div className="reader-container" role="region" aria-label="Reading panel" aria-live="polite">
+        <ReaderSettingsMenu readMode={settings.readMode} onToggleReadMode={toggleReadMode} />
+
         <div className="reader-text" key={page}>
-          {chunks[page]}
+          {settings.readMode && words.length > 0
+            ? words.map((w, idx) => (
+                <span
+                  key={idx}
+                  className={`reader-word${wordIndex === idx ? " is-active" : ""}`}
+                >
+                  {w}
+                  {idx < words.length - 1 ? " " : ""}
+                </span>
+              ))
+            : chunks[page]}
         </div>
 
         <div className="reader-footer">

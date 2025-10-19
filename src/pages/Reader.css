@@ -3,6 +3,7 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
+  background-color: #f7f7f7;
   display: grid;
   place-items: center;
   padding: 0;
@@ -14,6 +15,80 @@
   max-width: 900px;
   padding: 40px;
   display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 24px;
+}
+
+/* Settings */
+.reader-topbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+}
+
+.settings {
+  position: relative;
+}
+
+.settings-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #0a66ff;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.settings-button:hover .settings-label {
+  text-decoration: underline;
+}
+
+/* Hamburger icon */
+.hamburger {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.hamburger > span {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+/* Menu popup */
+.settings-menu {
+  position: absolute;
+  top: 34px;
+  right: 0;
+  background: #ffffff;
+  color: #111;
+  padding: 8px 10px;
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  min-width: 160px;
+  z-index: 10;
+}
+
+.settings-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.settings-checkbox {
+  width: 16px;
+  height: 16px;
   grid-template-rows: 1fr auto;
   gap: 32px;
 }
@@ -26,6 +101,22 @@
   text-align: left;
   max-height: calc(100vh - 160px);
   overflow: hidden;
+}
+
+/* Highlights the current word and has small transition (Word read mode) */
+.reader-word {
+  transition: background-color 100ms ease;
+}
+
+.reader-word.is-active {
+  background-color: #ffd900;
+  border-radius: 2px;
+}
+
+/* Empty state (only used if you keep the empty-text branch) */
+.reader-empty {
+  font-size: 18px;
+  color: #444;
 }
 
 /* For the next/prev reader navigation */
@@ -70,3 +161,4 @@
 .reader-next:active {
   transform: translateY(1px);
 }
+
