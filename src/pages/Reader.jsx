@@ -143,6 +143,7 @@ export default function Reader() {
 
   // Right arrow on keyboard goes to next page
   useEffect(() => {
+    // Right arrow on keyboard goes to next page
     function onKey(e) {
       if (e.key === "ArrowRight") {
         e.preventDefault();
