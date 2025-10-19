@@ -89,6 +89,8 @@
 .settings-checkbox {
   width: 16px;
   height: 16px;
+  grid-template-rows: 1fr auto;
+  gap: 32px;
 }
 
 /* Reader text */
@@ -126,6 +128,7 @@
 .reader-link:hover {
   text-decoration: underline;
 }
+
 
 /* Footer with progress and next/prev buttons */
 .reader-footer {
