@@ -103,12 +103,16 @@
 
 /* Highlights the current word and has small transition (Word read mode) */
 .reader-word {
+  display: inline-block;
+  transition: transform 150ms ease;
   transition: background-color 100ms ease;
 }
 
 .reader-word.is-active {
   background-color: #ffd900;
   border-radius: 2px;
+
+  transform: scale(1.3);
 }
 
 /* Empty state (only used if you keep the empty-text branch) */

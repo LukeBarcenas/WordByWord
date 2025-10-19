@@ -4,14 +4,32 @@ import "./Home.css";
 
 export default function Home() {
   const [inputText, setInputText] = useState("");
+  const [uploadText, setText] = useState("");
   const navigate = useNavigate();
 
   function handleSubmit(e) {
     e.preventDefault();
-    const text = inputText.trim();
+    const text = inputText.trim() || uploadText.trim();
     if (!text) return;
     sessionStorage.setItem("reader_text", text);
     navigate("/reader", { state: { text } });
+  }
+
+  function handleFile(file) {
+    if (!file) {
+      return;
+    }
+
+    const fileReader = new FileReader();
+
+    fileReader.onloadend = () => {
+      const content = fileReader.result;
+
+      if (content && content.trim()) {
+        setText(content);
+      }
+    };
+    fileReader.readAsText(file);
   }
 
   return (
@@ -19,9 +37,21 @@ export default function Home() {
       <h1>Home</h1>
       <form onSubmit={handleSubmit}>
         <label htmlFor="textInput" className="home-label">
-          Input your text:
+          Input or upload your text:
         </label>
-        <input
+        <div className="input-group mb-3">
+          <label className="input-group-text" htmlFor="inputGroupFile01">
+            Upload
+          </label>
+          <input 
+            type="file" 
+            className="form-control" 
+            id="inputGroupFile01" 
+            accept=".txt"
+            onChange={(e) => handleFile(e.target.files[0])}
+          />
+        </div>
+        <textarea
           id="textInput"
           type="text"
           value={inputText}

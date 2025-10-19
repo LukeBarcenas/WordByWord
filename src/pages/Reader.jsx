@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import "../pages/Reader.css";
 import ReaderSettingsMenu from "../components/ReaderSettingsMenu";
-import { ReaderSettings } from "../settings/ReaderSettings";
+import { useReaderSettings } from "../settings/ReaderSettings";
 
 // Splits text into 100 word chunks, rounded to the nearest end of a sentence
 function splitIntoChunks(text, maxWords = 100) {
@@ -72,7 +72,7 @@ export default function Reader() {
   const [page, setPage] = useState(0);
 
   // Settings management
-  const { settings, setReadMode, toggleReadMode } = ReaderSettings();
+  const { settings, setReadMode, toggleReadMode } = useReaderSettings();
 
   // Word read mode's current highlighted word index (null if not in read mode)
   const [wordIndex, setWordIndex] = useState(null);
@@ -169,7 +169,6 @@ export default function Reader() {
                   key={idx}
                   className={`reader-word${wordIndex === idx ? " is-active" : ""}`}
                 >
-                  {w}
                   {idx < words.length - 1 ? " " : ""}
                 </span>
               ))
