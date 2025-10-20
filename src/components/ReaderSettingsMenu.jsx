@@ -4,10 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import "../pages/Reader.css";
 
 export default function ReaderSettings({
-  readMode,
-  onToggleReadMode,
-  focusLine,
-  onToggleFocusLine,
+    readMode,
+    onToggleReadMode,
+    highlightMode,
+    onToggleHighlightMode,
+    magnifyMode,
+    onToggleMagnifyMode,
+    readMode,
+    focusLine,
+    onToggleFocusLine,
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -44,7 +49,7 @@ export default function ReaderSettings({
         {open && (
           <div id="settings-menu" className="settings-menu" role="menu">
             <label
-              className="settings-item"
+              className="settings-item read-mode"
               role="menuitemcheckbox"
               aria-checked={readMode ? "true" : "false"}
             >
@@ -57,6 +62,33 @@ export default function ReaderSettings({
               Read mode
             </label>
 
+            <label
+              className="settings-item secondary"
+              role="menuitemcheckbox"
+              aria-checked={highlightMode ? "true" : "false"}
+            >
+              <input
+                type="checkbox"
+                className="settings-checkbox-secondary"
+                checked={highlightMode}
+                onChange={onToggleHighlightMode}
+              />
+              Highlight mode
+            </label>
+
+            <label
+              className="settings-item secondary"
+              role="menuitemcheckbox"
+              aria-checked={magnifyMode ? "true" : "false"}
+            >
+              <input
+                type="checkbox"
+                className="settings-checkbox-secondary"
+                checked={magnifyMode}
+                onChange={onToggleMagnifyMode}
+              />
+              Magnify mode
+            </label>
             <div
               className={`settings-subgroup ${
                 readMode ? "" : "is-disabled"

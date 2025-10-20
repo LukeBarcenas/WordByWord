@@ -86,6 +86,24 @@
   cursor: pointer;
 }
 
+.settings-item.read-mode {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.settings-item.secondary {
+  padding-left: 24px;
+}
+
+.settings-checkbox {
+  width: 20px;
+  height: 20px;
+}
+
+.settings-checkbox-secondary {
+  width: 16px;
+  height: 16px;
+  padding-right: 20px
 .settings-checkbox {
   width: 16px;
   height: 16px;
@@ -114,21 +132,31 @@
   line-height: 30px;
   color: #101010;
   text-align: left;
-  max-height: 100%;
+  max-height: calc(100vh - 160px);
   overflow: hidden;
+  line-height: 2em;
 }
 
 /* Highlights the current word and has small transition (Word read mode) */
 .reader-word {
-  transition: background-color 100ms ease;
+  transition: background-color 200ms ease, transform 200ms ease, font-size 300ms ease;
+  font-size: 1em;
+  display: inline;
 }
 
-/* highlights the word */
 .reader-word.is-active {
   background-color: #ffd900;
   border-radius: 2px;
 }
 
+.reader-word.is-magnified {
+  font-size: 1em;
+  transform-origin: center bottom;
+  transform: scale(1.3);
+  display: inline-block;
+  margin-left: 1em;
+  margin-right: 1em;
+  color: blue;
 /* makes non current lines lower contrast */
 .reader-word.is-dim {
   color: #a7abb0;
@@ -140,6 +168,7 @@
   color: #444;
 }
 
+/* For the next/prev reader navigation */
 .reader-link {
   color: #0066ff;
   text-decoration: none;
@@ -148,7 +177,6 @@
 .reader-link:hover {
   text-decoration: underline;
 }
-
 
 /* Footer with progress and next/prev buttons */
 .reader-footer {
@@ -160,6 +188,26 @@
 .reader-progress {
   font-size: 14px;
   color: #666;
+}
+
+.progress {
+  width: 80%;
+  height: 20px;
+}
+
+.progress-bar {
+  height: 100%;
+}
+
+.reader-ruler {
+  position: absolute;
+  pointer-events: none;
+  z-index: 9999;
+  transition: left 0.05s ease, top 0.05s ease;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
 }
 
 /* For reader navigation buttons (next/prev/finish) */
@@ -177,6 +225,7 @@
   text-decoration: underline;
 }
 
+/* Button press effect */
 .reader-next:active {
   transform: translateY(1px);
 }
