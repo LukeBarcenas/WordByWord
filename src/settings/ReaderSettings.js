@@ -6,6 +6,7 @@ const STORAGE_KEY = "reader_settings";
 
 const initialState = {
   readMode: false,
+  focusLine: false,
   // add more stuff here later
 };
 
@@ -17,13 +18,18 @@ function reducer(state, action) {
     case "TOGGLE_READ_MODE":
       return { ...state, readMode: !state.readMode };
 
+    case "SET_FOCUS_LINE":
+      return { ...state, focusLine: action.value };
+    case "TOGGLE_FOCUS_LINE":
+      return { ...state, focusLine: !state.focusLine };
+
     default:
       return state;
   }
 }
 
 // Custom hook to use reader settings
-export function useReaderSettings() {
+export function ReaderSettings() {
   const [state, dispatch] = useReducer(reducer, initialState, (base) => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -39,12 +45,20 @@ export function useReaderSettings() {
     } catch {}
   }, [state]);
 
+  // For read mode
   const setReadMode = (value) => dispatch({ type: "SET_READ_MODE", value });
   const toggleReadMode = () => dispatch({ type: "TOGGLE_READ_MODE" });
+
+  // For focus line
+  const setFocusLine = (value) => dispatch({ type: "SET_FOCUS_LINE", value });
+  const toggleFocusLine = () => dispatch({ type: "TOGGLE_FOCUS_LINE" });
 
   return {
     settings: state,
     setReadMode,
     toggleReadMode,
+
+    setFocusLine,
+    toggleFocusLine,
   };
 }
