@@ -6,7 +6,7 @@ import { useReaderSettings } from "../settings/ReaderSettings";
 
 // Splits text into 100 word chunks, rounded to the nearest end of a sentence
 function splitIntoChunks(text, maxWords = 100) {
-  if (!text) return [];
+  if (!text) return { chunks: [], totalWords: 0 };
 
   // Splits based on sentence-ending punctuation (., !, ?) followed by space or endlines
   const sentences =
@@ -19,6 +19,11 @@ function splitIntoChunks(text, maxWords = 100) {
   const wordCounts = sentences.map((s) =>
     s.trim().length === 0 ? 0 : s.trim().split(/\s+/).length
   );
+
+  let totalWords = 0;
+  for (let w = 0; w < wordCounts.length; w++) {
+    totalWords += wordCounts[w];
+  }
 
   const chunks = [];
   let i = 0;
@@ -57,7 +62,7 @@ function splitIntoChunks(text, maxWords = 100) {
     chunks.push(text.trim());
   }
 
-  return chunks;
+  return {chunks , totalWords};
 }
 
 export default function Reader() {
@@ -68,11 +73,11 @@ export default function Reader() {
   const text = (state?.text ?? sessionStorage.getItem("reader_text") ?? "").trim();
 
   // Compute chunks for the text
-  const chunks = useMemo(() => splitIntoChunks(text, 100), [text]);
+  const {chunks, totalWords} = useMemo(() => splitIntoChunks(text, 100), [text]);
   const [page, setPage] = useState(0);
 
   // Settings management
-  const { settings, setReadMode, toggleReadMode } = useReaderSettings();
+  const { settings, setReadMode, toggleReadMode, toggleHighlightMode, toggleMagnifyMode} = useReaderSettings();
 
   // Word read mode's current highlighted word index (null if not in read mode)
   const [wordIndex, setWordIndex] = useState(null);
@@ -82,6 +87,20 @@ export default function Reader() {
     const current = chunks[page] ?? "";
     return current.length ? current.split(/\s+/) : [];
   }, [chunks, page]);
+
+  // total
+  const currentWordIndex = useMemo(() => {
+    let sum = 0;
+    for (let i = 0; i < page; i++) {
+      sum += chunks[i].split(/\s+/).length;
+    }
+
+    return sum + (wordIndex ?? 0);
+  }, [chunks, page, wordIndex]);
+
+  const progressBar = totalWords > 0
+    ? Math.min(100, (currentWordIndex / totalWords) * 100)
+    : 0;
 
   // Prevent scrolling so page is easier to consume for the reader
   useEffect(() => {
@@ -160,18 +179,30 @@ export default function Reader() {
   return (
     <div className="reader-page">
       <div className="reader-container" role="region" aria-label="Reading panel" aria-live="polite">
-        <ReaderSettingsMenu readMode={settings.readMode} onToggleReadMode={toggleReadMode} />
+        <ReaderSettingsMenu
+          readMode={settings.readMode}
+          onToggleReadMode={toggleReadMode}
+          highlightMode={settings.highlightMode}
+          onToggleHighlightMode={toggleHighlightMode}
+          magnifyMode={settings.magnifyMode}
+          onToggleMagnifyMode={toggleMagnifyMode}
+        />
 
         <div className="reader-text" key={page}>
           {settings.readMode && words.length > 0
-            ? words.map((w, idx) => (
-                <span
-                  key={idx}
-                  className={`reader-word${wordIndex === idx ? " is-active" : ""}`}
-                >
+            ? words.map((w, idx) => {
+                let classes = "reader-word";
+                if (wordIndex === idx) {
+                  if (settings.highlightMode) classes += " is-active";
+                  if (settings.magnifyMode) classes += " is-magnified";
+                }
+                return (
+                <span key={idx} className={classes}>
+                  {w}
                   {idx < words.length - 1 ? " " : ""}
                 </span>
-              ))
+                );
+              })
             : chunks[page]}
         </div>
 
@@ -179,6 +210,11 @@ export default function Reader() {
           <div className="reader-progress">
             {chunks.length > 1 ? `${page + 1} / ${chunks.length}` : ""}
           </div>
+
+          <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow={progressBar} aria-valuemin="0" aria-valuemax="100" style={{'--bs-progress-bar-bg': '#38CB82'}}>
+            <div className="progress-bar progress-bar-striped progress-bar-animated" style={{width: `${progressBar}%`}}></div>
+          </div>
+
           <button type="button" className="reader-next" onClick={handleNext} aria-label={actionLabel}>
             {actionLabel}
           </button>

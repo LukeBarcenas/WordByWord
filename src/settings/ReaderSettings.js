@@ -6,6 +6,8 @@ const STORAGE_KEY = "reader_settings";
 
 const initialState = {
   readMode: false,
+  highlightMode: true,
+  magnifyMode: false,
   // add more stuff here later
 };
 
@@ -16,7 +18,14 @@ function reducer(state, action) {
       return { ...state, readMode: action.value };
     case "TOGGLE_READ_MODE":
       return { ...state, readMode: !state.readMode };
-
+    case "SET_HIGHLIGHT_MODE":
+      return { ...state, highlightMode: action.value };
+    case "TOGGLE_HIGHLIGHT_MODE":
+      return { ...state, highlightMode: !state.highlightMode };
+    case "SET_MAGNIFY_MODE":
+      return { ...state, magnifyMode: action.value };
+    case "TOGGLE_MAGNIFY_MODE":
+      return { ...state, magnifyMode: !state.magnifyMode };
     default:
       return state;
   }
@@ -42,9 +51,19 @@ export function useReaderSettings() {
   const setReadMode = (value) => dispatch({ type: "SET_READ_MODE", value });
   const toggleReadMode = () => dispatch({ type: "TOGGLE_READ_MODE" });
 
+  const setHighlightMode = (value) => dispatch({ type: "SET_HIGHLIGHT_MODE", value });
+  const toggleHighlightMode = () => dispatch({ type: "TOGGLE_HIGHLIGHT_MODE" });
+
+  const setMagnifyMode = (value) => dispatch({ type: "SET_MAGNIFY_MODE", value });
+  const toggleMagnifyMode = () => dispatch({ type: "TOGGLE_MAGNIFY_MODE" });
+
   return {
     settings: state,
     setReadMode,
     toggleReadMode,
+    setHighlightMode,
+    toggleHighlightMode,
+    setMagnifyMode,
+    toggleMagnifyMode,
   };
 }
