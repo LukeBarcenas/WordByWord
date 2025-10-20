@@ -4,15 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import "../pages/Reader.css";
 
 export default function ReaderSettings({
-    readMode,
-    onToggleReadMode,
-    highlightMode,
-    onToggleHighlightMode,
-    magnifyMode,
-    onToggleMagnifyMode,
-    readMode,
-    focusLine,
-    onToggleFocusLine,
+  readMode,
+  onToggleReadMode,
+  highlightMode,
+  onToggleHighlightMode,
+  magnifyMode,
+  onToggleMagnifyMode,
+  focusLine,
+  onToggleFocusLine,
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -62,51 +61,40 @@ export default function ReaderSettings({
               Read mode
             </label>
 
-            <label
-              className="settings-item secondary"
-              role="menuitemcheckbox"
-              aria-checked={highlightMode ? "true" : "false"}
-            >
-              <input
-                type="checkbox"
-                className="settings-checkbox-secondary"
-                checked={highlightMode}
-                onChange={onToggleHighlightMode}
-              />
-              Highlight mode
-            </label>
+            <div className={`settings-subgroup ${readMode ? "" : "is-disabled"}`}>
+              <label className="settings-item" role="menuitemradio" aria-checked={highlightMode ? "true" : "false"}>
+                <input
+                  type="radio"
+                  name="read-effect"
+                  className="settings-checkbox-secondary"
+                  checked={!!highlightMode}
+                  onChange={() => onToggleHighlightMode()}
+                  disabled={!readMode}
+                />
+                Highlight
+              </label>
 
-            <label
-              className="settings-item secondary"
-              role="menuitemcheckbox"
-              aria-checked={magnifyMode ? "true" : "false"}
-            >
-              <input
-                type="checkbox"
-                className="settings-checkbox-secondary"
-                checked={magnifyMode}
-                onChange={onToggleMagnifyMode}
-              />
-              Magnify mode
-            </label>
-            <div
-              className={`settings-subgroup ${
-                readMode ? "" : "is-disabled"
-              }`}
-            >
-              <label
-                className="settings-item nested"
-                role="menuitemcheckbox"
-                aria-checked={focusLine ? "true" : "false"}
-              >
+              <label className="settings-item" role="menuitemradio" aria-checked={magnifyMode ? "true" : "false"}>
+                <input
+                  type="radio"
+                  name="read-effect"
+                  className="settings-checkbox-secondary"
+                  checked={!!magnifyMode}
+                  onChange={() => onToggleMagnifyMode()}
+                  disabled={!readMode}
+                />
+                Magnify
+              </label>
+
+              <label className="settings-item" role="menuitemcheckbox" aria-checked={focusLine ? "true" : "false"}>
                 <input
                   type="checkbox"
-                  className="settings-checkbox"
-                  checked={focusLine}
+                  className="settings-checkbox-secondary"
+                  checked={!!focusLine}
                   onChange={onToggleFocusLine}
                   disabled={!readMode}
                 />
-                Focus current line
+                Focus on current line
               </label>
             </div>
           </div>

@@ -17,19 +17,25 @@ function reducer(state, action) {
   switch (action.type) {
     case "SET_READ_MODE":
       return { ...state, readMode: action.value };
+
     case "TOGGLE_READ_MODE":
       return { ...state, readMode: !state.readMode };
+
     case "SET_HIGHLIGHT_MODE":
       return { ...state, highlightMode: action.value };
+
     case "TOGGLE_HIGHLIGHT_MODE":
       return { ...state, highlightMode: !state.highlightMode };
+
     case "SET_MAGNIFY_MODE":
       return { ...state, magnifyMode: action.value };
+
     case "TOGGLE_MAGNIFY_MODE":
       return { ...state, magnifyMode: !state.magnifyMode };
 
     case "SET_FOCUS_LINE":
       return { ...state, focusLine: action.value };
+
     case "TOGGLE_FOCUS_LINE":
       return { ...state, focusLine: !state.focusLine };
 
@@ -55,19 +61,47 @@ export function useReaderSettings() {
     } catch {}
   }, [state]);
 
+  // Keep dependent modes coherent with readMode state
+  useEffect(() => {
+    if (!state.readMode) {
+      if (state.focusLine) dispatch({ type: "SET_FOCUS_LINE", value: false });
+      if (state.magnifyMode) dispatch({ type: "SET_MAGNIFY_MODE", value: false });
+      if (state.highlightMode) dispatch({ type: "SET_HIGHLIGHT_MODE", value: false });
+    } else {
+      // turn on highlight and focus line by default
+      if (!state.highlightMode && !state.magnifyMode) {
+        dispatch({ type: "SET_HIGHLIGHT_MODE", value: true });
+      }
+      if (!state.focusLine) {
+        dispatch({ type: "SET_FOCUS_LINE", value: true });
+      }
+    }
+  }, [state.readMode]);
+
   const setReadMode = (value) => dispatch({ type: "SET_READ_MODE", value });
   const toggleReadMode = () => dispatch({ type: "TOGGLE_READ_MODE" });
 
-  const setHighlightMode = (value) => dispatch({ type: "SET_HIGHLIGHT_MODE", value });
-  const toggleHighlightMode = () => dispatch({ type: "TOGGLE_HIGHLIGHT_MODE" });
+  // Make highlight and magnify act as radio buttons
+  const setHighlightMode = (value) => {
+    if (value) {
+      dispatch({ type: "SET_HIGHLIGHT_MODE", value: true });
+      if (state.magnifyMode) dispatch({ type: "SET_MAGNIFY_MODE", value: false });
+    } else {
+      dispatch({ type: "SET_HIGHLIGHT_MODE", value: false });
+    }
+  };
+  const toggleHighlightMode = () => setHighlightMode(!state.highlightMode);
 
-  const setMagnifyMode = (value) => dispatch({ type: "SET_MAGNIFY_MODE", value });
-  const toggleMagnifyMode = () => dispatch({ type: "TOGGLE_MAGNIFY_MODE" });
-  // For read mode
-  const setReadMode = (value) => dispatch({ type: "SET_READ_MODE", value });
-  const toggleReadMode = () => dispatch({ type: "TOGGLE_READ_MODE" });
+  const setMagnifyMode = (value) => {
+    if (value) {
+      dispatch({ type: "SET_MAGNIFY_MODE", value: true });
+      if (state.highlightMode) dispatch({ type: "SET_HIGHLIGHT_MODE", value: false });
+    } else {
+      dispatch({ type: "SET_MAGNIFY_MODE", value: false });
+    }
+  };
+  const toggleMagnifyMode = () => setMagnifyMode(!state.magnifyMode);
 
-  // For focus line
   const setFocusLine = (value) => dispatch({ type: "SET_FOCUS_LINE", value });
   const toggleFocusLine = () => dispatch({ type: "TOGGLE_FOCUS_LINE" });
 
@@ -79,7 +113,6 @@ export function useReaderSettings() {
     toggleHighlightMode,
     setMagnifyMode,
     toggleMagnifyMode,
-
     setFocusLine,
     toggleFocusLine,
   };

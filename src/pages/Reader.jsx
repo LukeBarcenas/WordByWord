@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import "../pages/Reader.css";
 import ReaderSettingsMenu from "../components/ReaderSettingsMenu";
@@ -62,7 +62,7 @@ function splitIntoChunks(text, maxWords = 100) {
     chunks.push(text.trim());
   }
 
-  return {chunks , totalWords};
+  return { chunks, totalWords };
 }
 
 export default function Reader() {
@@ -73,11 +73,18 @@ export default function Reader() {
   const text = (state?.text ?? sessionStorage.getItem("reader_text") ?? "").trim();
 
   // Compute chunks for the text
-  const {chunks, totalWords} = useMemo(() => splitIntoChunks(text, 100), [text]);
+  const { chunks, totalWords } = useMemo(() => splitIntoChunks(text, 100), [text]);
   const [page, setPage] = useState(0);
 
   // Settings management
-  const { settings, setReadMode, toggleReadMode, toggleHighlightMode, toggleMagnifyMode, toggleFocusLine} = useReaderSettings();
+  const {
+    settings,
+    setReadMode,
+    toggleReadMode,
+    toggleHighlightMode,
+    toggleMagnifyMode,
+    toggleFocusLine,
+  } = useReaderSettings();
 
   // Word read mode's current highlighted word index (null if not in read mode)
   const [wordIndex, setWordIndex] = useState(null);
@@ -92,9 +99,9 @@ export default function Reader() {
   const currentWordIndex = useMemo(() => {
     let sum = 0;
     for (let i = 0; i < page; i++) {
+      if (!chunks[i]) continue;
       sum += chunks[i].split(/\s+/).length;
     }
-
     return sum + (wordIndex ?? 0);
   }, [chunks, page, wordIndex]);
 
@@ -171,7 +178,7 @@ export default function Reader() {
       }
 
       // Pressing space turns on word read mode
-      if (e.code === "Space") {
+      if (e.code === "Space" || e.key === " ") {
         e.preventDefault();
 
         // Start at first word if not already in read mode
@@ -202,7 +209,7 @@ export default function Reader() {
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [page, chunks.length, wordIndex, words.length, settings.readMode]);
+  }, [page, chunks.length, wordIndex, words.length, settings.readMode, setReadMode, navigate]);
 
   // When text ends, go back to home
   function handleNext() {
@@ -228,21 +235,39 @@ export default function Reader() {
           onToggleHighlightMode={toggleHighlightMode}
           magnifyMode={settings.magnifyMode}
           onToggleMagnifyMode={toggleMagnifyMode}
+          focusLine={settings.focusLine}
+          onToggleFocusLine={toggleFocusLine}
         />
 
-        <div className="reader-text" key={page}>
+        <div className="reader-text" key={page} ref={textRef}>
           {settings.readMode && words.length > 0
             ? words.map((w, idx) => {
+                let dim = false;
+                if (settings.focusLine && currentLineTop !== null) {
+                  const el = wordRefs.current[idx];
+                  if (el) {
+                    const t = Math.round(el.getBoundingClientRect().top);
+                    const TOL = settings.magnifyMode ? 10 : 2;
+                    dim = Math.abs(t - currentLineTop) > TOL;
+                  }
+                }
+
                 let classes = "reader-word";
                 if (wordIndex === idx) {
                   if (settings.highlightMode) classes += " is-active";
                   if (settings.magnifyMode) classes += " is-magnified";
                 }
+                if (dim) classes += " is-dim";
+
                 return (
-                <span key={idx} className={classes}>
-                  {w}
-                  {idx < words.length - 1 ? " " : ""}
-                </span>
+                  <span
+                    key={idx}
+                    ref={(node) => (wordRefs.current[idx] = node)}
+                    className={classes}
+                  >
+                    {w}
+                    {idx < words.length - 1 ? " " : ""}
+                  </span>
                 );
               })
             : chunks[page]}
@@ -253,8 +278,19 @@ export default function Reader() {
             {chunks.length > 1 ? `${page + 1} / ${chunks.length}` : ""}
           </div>
 
-          <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow={progressBar} aria-valuemin="0" aria-valuemax="100" style={{'--bs-progress-bar-bg': '#38CB82'}}>
-            <div className="progress-bar progress-bar-striped progress-bar-animated" style={{width: `${progressBar}%`}}></div>
+          <div
+            className="progress"
+            role="progressbar"
+            aria-label="Reading progress"
+            aria-valuenow={progressBar}
+            aria-valuemin="0"
+            aria-valuemax="100"
+            style={{ "--bs-progress-bar-bg": "#38CB82" }}
+          >
+            <div
+              className="progress-bar progress-bar-striped progress-bar-animated"
+              style={{ width: `${progressBar}%` }}
+            ></div>
           </div>
 
           <button type="button" className="reader-next" onClick={handleNext} aria-label={actionLabel}>
