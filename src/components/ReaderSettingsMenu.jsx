@@ -10,7 +10,10 @@ export default function ReaderSettings({
     onToggleHighlightMode,
     magnifyMode,
     onToggleMagnifyMode,
-  }) {
+    readMode,
+    focusLine,
+    onToggleFocusLine,
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -86,6 +89,26 @@ export default function ReaderSettings({
               />
               Magnify mode
             </label>
+            <div
+              className={`settings-subgroup ${
+                readMode ? "" : "is-disabled"
+              }`}
+            >
+              <label
+                className="settings-item nested"
+                role="menuitemcheckbox"
+                aria-checked={focusLine ? "true" : "false"}
+              >
+                <input
+                  type="checkbox"
+                  className="settings-checkbox"
+                  checked={focusLine}
+                  onChange={onToggleFocusLine}
+                  disabled={!readMode}
+                />
+                Focus current line
+              </label>
+            </div>
           </div>
         )}
       </div>

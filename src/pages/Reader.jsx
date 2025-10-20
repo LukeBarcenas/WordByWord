@@ -77,7 +77,7 @@ export default function Reader() {
   const [page, setPage] = useState(0);
 
   // Settings management
-  const { settings, setReadMode, toggleReadMode, toggleHighlightMode, toggleMagnifyMode} = useReaderSettings();
+  const { settings, setReadMode, toggleReadMode, toggleHighlightMode, toggleMagnifyMode, toggleFocusLine} = useReaderSettings();
 
   // Word read mode's current highlighted word index (null if not in read mode)
   const [wordIndex, setWordIndex] = useState(null);
@@ -120,6 +120,47 @@ export default function Reader() {
     }
   }, [page, settings.readMode, words.length]);
 
+  // If read mode is turned off while focus line is still on, turn focus line off too
+  useEffect(() => {
+    if (!settings.readMode && settings.focusLine) {
+      toggleFocusLine();
+    }
+  }, [settings.readMode, settings.focusLine, toggleFocusLine]);
+
+  // Gray out non-current lines
+  const textRef = useRef(null);
+  const wordRefs = useRef([]);
+  const [currentLineTop, setCurrentLineTop] = useState(null);
+
+  // Make ref array match words length
+  useEffect(() => {
+    wordRefs.current = new Array(words.length);
+  }, [words.length]);
+
+  useEffect(() => {
+    if (!settings.readMode || !settings.focusLine) {
+      setCurrentLineTop(null);
+      return;
+    }
+    function measure() {
+      const activeEl = wordIndex !== null ? wordRefs.current[wordIndex] : null;
+      if (!activeEl) {
+        setCurrentLineTop(null);
+        return;
+      }
+      const top = Math.round(activeEl.getBoundingClientRect().top);
+      setCurrentLineTop(top);
+    }
+    measure();
+    window.addEventListener("resize", measure);
+    const id = setInterval(measure, 200);
+    return () => {
+      window.removeEventListener("resize", measure);
+      clearInterval(id);
+    };
+  }, [settings.readMode, settings.focusLine, wordIndex, page, words.length]);
+
+  // Right arrow on keyboard goes to next page
   useEffect(() => {
     // Right arrow on keyboard goes to next page
     function onKey(e) {
@@ -150,6 +191,7 @@ export default function Reader() {
           // Checks if its at the end of the page. If so, go to next page
           if (page < chunks.length - 1) {
             setPage((p) => p + 1);
+            // Automatically start read mode on next page if possible
           } else {
             sessionStorage.removeItem("reader_text");
             navigate("/");

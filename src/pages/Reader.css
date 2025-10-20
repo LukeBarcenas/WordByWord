@@ -73,7 +73,7 @@
   padding: 8px 10px;
   border-radius: 8px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
-  min-width: 200px;
+  min-width: 160px;
   z-index: 10;
 }
 
@@ -104,6 +104,26 @@
   width: 16px;
   height: 16px;
   padding-right: 20px
+.settings-checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+.settings-subgroup {
+  margin-left: 16px;
+  padding-left: 10px;
+  border-left: 2px solid #e2e2e2;
+  margin-top: 6px;
+}
+
+.settings-item.nested {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.settings-subgroup.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 /* Reader text */
@@ -137,6 +157,9 @@
   margin-left: 1em;
   margin-right: 1em;
   color: blue;
+/* makes non current lines lower contrast */
+.reader-word.is-dim {
+  color: #a7abb0;
 }
 
 /* Empty state (only used if you keep the empty-text branch) */

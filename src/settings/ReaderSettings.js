@@ -8,6 +8,7 @@ const initialState = {
   readMode: false,
   highlightMode: true,
   magnifyMode: false,
+  focusLine: false,
   // add more stuff here later
 };
 
@@ -26,6 +27,12 @@ function reducer(state, action) {
       return { ...state, magnifyMode: action.value };
     case "TOGGLE_MAGNIFY_MODE":
       return { ...state, magnifyMode: !state.magnifyMode };
+
+    case "SET_FOCUS_LINE":
+      return { ...state, focusLine: action.value };
+    case "TOGGLE_FOCUS_LINE":
+      return { ...state, focusLine: !state.focusLine };
+
     default:
       return state;
   }
@@ -56,6 +63,13 @@ export function useReaderSettings() {
 
   const setMagnifyMode = (value) => dispatch({ type: "SET_MAGNIFY_MODE", value });
   const toggleMagnifyMode = () => dispatch({ type: "TOGGLE_MAGNIFY_MODE" });
+  // For read mode
+  const setReadMode = (value) => dispatch({ type: "SET_READ_MODE", value });
+  const toggleReadMode = () => dispatch({ type: "TOGGLE_READ_MODE" });
+
+  // For focus line
+  const setFocusLine = (value) => dispatch({ type: "SET_FOCUS_LINE", value });
+  const toggleFocusLine = () => dispatch({ type: "TOGGLE_FOCUS_LINE" });
 
   return {
     settings: state,
@@ -65,5 +79,8 @@ export function useReaderSettings() {
     toggleHighlightMode,
     setMagnifyMode,
     toggleMagnifyMode,
+
+    setFocusLine,
+    toggleFocusLine,
   };
 }
