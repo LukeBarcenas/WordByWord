@@ -9,6 +9,7 @@ export default function Navbar() {
       <ul>
         <li><Link to="/" className={pathname === "/" ? "active" : ""}>Home</Link></li>
         <li><Link to="/about" className={pathname === "/about" ? "active" : ""}>About</Link></li>
+        <li><Link to="/login" className={pathname === "/login" ? "active" : ""}>Login</Link></li>
       </ul>
     </nav>
   );
