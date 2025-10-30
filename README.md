@@ -19,9 +19,8 @@ npm install
 npm run dev
 ```
 
-### 4. Install Front-End Dependencies
+### 4. Install Front-End Dependencies (In a new Terminal Window in the WordByWord directory)
 ```console
-cd ..
 npm install
 ```
 
