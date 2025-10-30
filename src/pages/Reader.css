@@ -2,11 +2,46 @@
 .reader-page {
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
   background-color: #f7f7f7;
   display: grid;
   place-items: center;
   padding: 0;
+}
+
+.reader-page.dark-mode {
+  background-color: #101010;
+  color:#f7f7f7;
+}
+
+.reader-page.dark-mode .reader-word.is-active {
+  background-color: #7a7a19;
+  border-radius: 2px;
+}
+
+.reader-page.dark-mode .reader-word.is-magnified {
+  color: #fcee2e;
+}
+
+.reader-page.dark-mode .reader-text {
+  color:#f7f7f7;
+}
+
+.reader-page.dark-mode .settings-menu {
+  background: #222;
+  color: #eee;
+}
+
+.reader.page.dark-mode .settings-button {
+  color: #9cc0ff;
+}
+
+.reader-page.dark-mode .reader-next {
+  color:#f7f7f7;
+}
+
+.reader-page.dark-mode .reader-progress {
+  color:#f7f7f7;
 }
 
 /* Wraps the text */
@@ -63,6 +98,14 @@
   border-radius: 1px;
 }
 
+.words-per-minute {
+  position: absolute;
+  text-align: center;
+  font-size: 17px;
+  color:#0a66ff;
+  font-weight: 500;
+}
+
 /* Menu popup */
 .settings-menu {
   position: absolute;
@@ -86,9 +129,23 @@
   cursor: pointer;
 }
 
+.text-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  font-size: 14px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
 .settings-item.read-mode {
   font-weight: 600;
   font-size: 16px;
+}
+
+.settings-item appearance {
+  font-weight: 300;
 }
 
 /* Checkbox sizes */
@@ -127,7 +184,7 @@
 
 /* Highlights the current word and has small transition (Word read mode) */
 .reader-word {
-  transition: background-color 200ms ease, transform 200ms ease, font-size 300ms ease, color 200ms ease;
+  transition: background-color 200ms ease, transform 330ms ease cubic-bezier(0.25, 0.2, 0.25, 1), font-size 350ms ease, color 300ms ease;
   font-size: 1em;
   display: inline;
 }
@@ -142,15 +199,16 @@
   font-size: 1em;
   display: inline-block;
   transform: scale(1.2);
-  transform-origin: center center;
-  margin-left: 1em;
-  margin-right: 1em;
+  transform-origin: center;
+  margin-left: 0.9em;
+  margin-right: 0.9em;
   color: blue;
 }
 
 /* makes non current lines lower contrast */
 .reader-word.is-dim {
   color: #a7abb0;
+  filter: blur(1.5px);
 }
 
 /* Empty state (only used if you keep the empty-text branch) */
