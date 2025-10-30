@@ -20,6 +20,7 @@ function splitIntoChunks(text, maxWords = 100) {
     s.trim().length === 0 ? 0 : s.trim().split(/\s+/).length
   );
 
+  // Calculate totalwords
   let totalWords = 0;
   for (let w = 0; w < wordCounts.length; w++) {
     totalWords += wordCounts[w];
@@ -68,6 +69,11 @@ function splitIntoChunks(text, maxWords = 100) {
 export default function Reader() {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const [wpm, setWpm] = useState(0);
+  const [wordCount, setWordCount] = useState(0);
+  const startTimeRef = useRef(null);
+  const [theme, setTheme] = useState("light");
+  const [font, setFont] = useState("Lexend");
 
   // Pull text from router state or sessionStorage so it stays after refreshing the page
   const text = (state?.text ?? sessionStorage.getItem("reader_text") ?? "").trim();
@@ -105,6 +111,7 @@ export default function Reader() {
     return sum + (wordIndex ?? 0);
   }, [chunks, page, wordIndex]);
 
+  // Progress bar 
   const progressBar = totalWords > 0
     ? Math.min(100, (currentWordIndex / totalWords) * 100)
     : 0;
@@ -118,10 +125,17 @@ export default function Reader() {
     };
   }, []);
 
+  // so dark mode does not persist
+  useEffect(() => {
+    return () => {
+      document.body.classList.remove('dark-mode');
+    };
+  }, []);
+
   // When the page or read mode changes, reset the word index
   useEffect(() => {
     if (settings.readMode && words.length > 0) {
-      setWordIndex(0);
+        setWordIndex(0);
     } else {
       setWordIndex(null);
     }
@@ -167,7 +181,6 @@ export default function Reader() {
     };
   }, [settings.readMode, settings.focusLine, wordIndex, page, words.length]);
 
-  // Right arrow on keyboard goes to next page
   useEffect(() => {
     // Right arrow on keyboard goes to next page
     function onKey(e) {
@@ -177,9 +190,40 @@ export default function Reader() {
         return;
       }
 
+      // Left arrow on keyboard goes back a word
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        if (settings.readMode && wordIndex !== null) {
+          if (wordIndex > 0) {
+            setWordIndex(wordIndex - 1);
+          }
+          else if (page > 0) {
+            setPage((p) => p - 1);
+            const words = (chunks[page - 1] ?? "").split(/\s+/);
+            setWordIndex(words.length - 1);
+          }
+        }
+        return;
+      }
+
       // Pressing space turns on word read mode
       if (e.code === "Space" || e.key === " ") {
         e.preventDefault();
+
+        // WPM
+        if (!startTimeRef.current) {
+          startTimeRef.current = new Date();
+        }
+
+        setWordCount((prev) => {
+          const newCount = prev + 1;
+          const minutes = Math.max((new Date() - startTimeRef.current) / (60000), 0.001);
+
+          const newWpm = Math.round(newCount / minutes);
+
+          setWpm(newWpm);
+          return newCount;
+        });
 
         // Start at first word if not already in read mode
         if (!settings.readMode) {
@@ -222,12 +266,25 @@ export default function Reader() {
     }
   }
 
+  function themeChange(newTheme) {
+    setTheme(newTheme);
+  }
+
+  function fontChange(newFont) {
+    setFont(newFont);
+  }
+
   const isLast = page === chunks.length - 1;
   const actionLabel = isLast ? "Finish" : "Next →";
 
   return (
-    <div className="reader-page">
+    <div className={`reader-page ${theme === "dark" ? "dark-mode" : ""}`} style={{fontFamily: font}}>
       <div className="reader-container" role="region" aria-label="Reading panel" aria-live="polite">
+        <div className="words-per-minute">
+          WPM <br />
+          {wpm}
+        </div>
+
         <ReaderSettingsMenu
           readMode={settings.readMode}
           onToggleReadMode={toggleReadMode}
@@ -237,6 +294,10 @@ export default function Reader() {
           onToggleMagnifyMode={toggleMagnifyMode}
           focusLine={settings.focusLine}
           onToggleFocusLine={toggleFocusLine}
+          theme={theme}
+          onToggleTheme={themeChange}
+          font={font}
+          onToggleFont={fontChange}
         />
 
         <div className="reader-text" key={page} ref={textRef}>

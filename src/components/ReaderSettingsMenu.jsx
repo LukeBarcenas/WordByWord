@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import "../pages/Reader.css";
+import Form from 'react-bootstrap/Form';
 
 export default function ReaderSettings({
   readMode,
@@ -12,6 +13,10 @@ export default function ReaderSettings({
   onToggleMagnifyMode,
   focusLine,
   onToggleFocusLine,
+  theme,
+  onToggleTheme,
+  font,
+  onToggleFont,
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -26,6 +31,10 @@ export default function ReaderSettings({
     return () => window.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
+  useEffect(() => {
+    document.body.classList.toggle('dark-mode', theme === "dark");
+  }, [theme]);
+  
   return (
     <div className="reader-topbar">
       <div className="settings" ref={ref}>
@@ -96,8 +105,61 @@ export default function ReaderSettings({
                 />
                 Focus on current line
               </label>
+
             </div>
-          </div>
+
+            <label
+              className="text-label"
+            >
+              Appearance
+            </label>
+
+            <Form.Select
+              size="sm"
+              value={font}
+              onChange={(e) => onToggleFont(e.target.value)}
+            >
+              <option value="Lexend">Lexend</option>
+              <option value="Arial">Arial</option>
+              <option value="Merriweather">Merriweather</option>
+              <option value="Open Sans">Open Sans</option>
+              <option value="Roboto">Roboto</option>
+              <option value="Lato">Lato</option>
+            </Form.Select>
+
+            <br></br>
+
+            <div className="form-check form-check-inline">
+              <input
+                className="form-check-input"
+                type="radio"
+                name="themeOptions"
+                id="lightMode"
+                value="light"
+                checked={theme === "light"}
+                onChange={() => onToggleTheme("light")}
+              />
+              <label className="form-check-label" htmlFor="inlineRadio2">
+                Light mode
+              </label>
+            </div>
+
+            <div className="form-check form-check-inline">
+              <input
+                className="form-check-input"
+                type="radio"
+                name="themeOptions"
+                id="darkMode"
+                value="dark"
+                checked={theme === "dark"}
+                onChange={() => onToggleTheme("dark")}
+              />
+              <label className="form-check-label" htmlFor="inlineRadio2">
+                Dark mode
+              </label>
+            </div>
+
+            </div>  
         )}
       </div>
     </div>
