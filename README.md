@@ -12,6 +12,7 @@ cd .\backend\
 ### 2. Install Back-End Dependencies (Ignore Medium Severity Warning)
 ```console
 npm install
+npm install nodemon
 ```
 
 ### 3. Start the Back-End Server
