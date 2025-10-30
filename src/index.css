@@ -41,6 +41,16 @@ body {
   border-radius: 4px;
 }
 
+.navbar button {
+
+  color: white;
+  background-color: red;
+  border-radius: 8px;
+  cursor: pointer;
+
+
+}
+
 .navbar a.active {
   background: #363636;
 }

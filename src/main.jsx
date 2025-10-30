@@ -4,9 +4,12 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./index.css";
+import { AuthContextProvider } from "./context/AuthContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <App />
+    <AuthContextProvider>
+      <App />
+    </AuthContextProvider>
   </BrowserRouter>
 );

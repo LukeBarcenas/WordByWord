@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSignup } from "../hooks/useSignup";
 import "../pages/Signup.css";
 
 export default function Signup() {
@@ -7,10 +8,14 @@ export default function Signup() {
     const [emailText, setEmailText] = useState();
     const [passwordText, setPasswordText] = useState();
     const [verifyText, setVerifyText] = useState();
+    const {signup, error, isLoading} = useSignup();
+    
     const navigate = useNavigate();
 
-    function handleSubmit(e) {
+    const handleSubmit = async (e) => {
+
         e.preventDefault();
+
 
         const text = emailText.trim() || passwordText.trim();
 
@@ -20,30 +25,33 @@ export default function Signup() {
 
         } 
 
-        navigate("/login");
+        await signup(emailText, passwordText)
+        //navigate("/login");
     }
 
     return (
-        <div class="login-container">
+        <div className="login-container">
             <h1>CREATE ACCOUNT</h1>
             
             <form onSubmit={handleSubmit}>
-                <div class="input-group">
-                    <label for="email">EMAIL</label>
+                <div className="input-group">
+                    <label htmlFor="email">EMAIL</label>
                     <input type="email" id="email" placeholder="your@email.com" onChange={(e) => setEmailText(e.target.value)}/>
                 </div>
                 
-                <div class="input-group">
-                    <label for="password">PASSWORD</label>
+                <div className="input-group">
+                    <label htmlFor="password">PASSWORD</label>
                     <input type="password" id="password" placeholder="••••••••" onChange={(e) => setPasswordText(e.target.value)}/>
                 </div>
 
-                <div class="input-group">
-                    <label for="password">VERIFY PASSWORD</label>
+                <div className="input-group">
+                    <label htmlFor="password">VERIFY PASSWORD</label>
                     <input type="password" id="password" placeholder="••••••••" onChange={(e) => setVerifyText(e.target.value)}/>
                 </div>
                 
-                <button type="submit"> SIGN UP </button>
+                <button type="submit" disabled={isLoading}> SIGN UP </button>
+
+                {error && <div className="error"> {error} </div>}
             </form>
         </div>
     );

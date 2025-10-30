@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLogin } from "../hooks/useLogin";
 import "../pages/Login.css";
 
 export default function Login() {
 
     const [emailText, setEmailText] = useState();
     const [passwordText, setPasswordText] = useState();
+    const {login, error, isLoading} = useLogin()
     const navigate = useNavigate();
 
-    function handleSubmit(e) {
+    const handleSubmit = async (e) => {
 
         e.preventDefault();
         const text = emailText.trim() || passwordText.trim();
@@ -19,7 +21,8 @@ export default function Login() {
 
         } 
 
-        navigate("/");
+        await login(emailText, passwordText)
+        //navigate("/");
     }
 
     function handleSignup(e) {
@@ -28,23 +31,24 @@ export default function Login() {
     }
 
     return (
-        <div class="login-container">
+        <div className="login-container">
             <h1>LOGIN</h1>
             
             <form onSubmit={handleSubmit}>
-                <div class="input-group">
-                    <label for="email">EMAIL</label>
+                <div className="input-group">
+                    <label htmlFor="email">EMAIL</label>
                     <input type="email" id="email" placeholder="your@email.com" onChange={(e) => setEmailText(e.target.value)}/>
                 </div>
                 
-                <div class="input-group">
-                    <label for="password">PASSWORD</label>
+                <div className="input-group">
+                    <label htmlFor="password">PASSWORD</label>
                     <input type="password" id="password" placeholder="••••••••" onChange={(e) => setPasswordText(e.target.value)}/>
                 </div>
                 
-                <button type="submit" class="submit-button"> SIGN IN </button>
+                <button type="submit" className="submit-button" disabled={isLoading}> SIGN IN </button>
+                {error && <div className="error"> {error} </div>}
                 
-                <div class="signup">
+                <div className="signup">
                     Don't have an account? 
                     
                     <button onClick={handleSignup}> SIGN UP </button>
