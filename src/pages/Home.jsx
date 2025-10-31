@@ -39,7 +39,7 @@ export default function Home() {
   return (
     <div className="home-container">
       <p className="home-description">
-        WordByWord turns any text you write or upload into a focused, word-by-word reading experience!  
+        WordByWord turns any text you write or upload into a focused, word-by-word reading experience! <br></br> 
         Upload a file or paste your text below, and start reading in a way that helps you break a long piece
         of text into an enjoyable reading experience.
       </p>

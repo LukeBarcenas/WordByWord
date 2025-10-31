@@ -4,6 +4,7 @@ import "../pages/Reader.css";
 import ReaderSettingsMenu from "../components/ReaderSettingsMenu";
 import { useReaderSettings } from "../settings/ReaderSettings";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useReward } from 'react-rewards';
 
 // Splits text into 100 word chunks, rounded to the nearest end of a sentence
 function splitIntoChunks(text, maxWords = 100) {
@@ -136,6 +137,7 @@ export default function Reader() {
   const startTimeRef = useRef(null);
   const [theme, setTheme] = useState("light");
   const [font, setFont] = useState("Lexend");
+  const { reward: triggerConfetti, isAnimating } = useReward('finishReward', 'confetti');
   const [words_read, setWords_Read] = useState(null)
   const [average_wpm, setAverage_WPM] = useState(null)
   const [fastest_wpm, setFastest_WPM] = useState(null)
@@ -245,7 +247,7 @@ export default function Reader() {
       if (!chunks[i]) continue;
       sum += chunks[i].split(/\s+/).length;
     }
-    return sum + (wordIndex ?? 0);
+    return sum + ((wordIndex !== null ? wordIndex + 1 : 0));
   }, [chunks, page, wordIndex]);
 
   // Progress bar 
@@ -366,7 +368,7 @@ export default function Reader() {
 
         setWordCount((prev) => {
           const newCount = prev + 1;
-          const minutes = Math.max((new Date() - startTimeRef.current) / (60000), 0.001);
+          const minutes = Math.max((new Date() - startTimeRef.current) / (60000), 0.01);
 
           const newWpm = Math.round(newCount / minutes);
 
@@ -424,10 +426,12 @@ export default function Reader() {
 
             // Automatically start read mode on next page if possible
           } else {
-
-            updateStatistics()
-            sessionStorage.removeItem("reader_text");
-            navigate("/");
+            triggerConfetti();
+            setTimeout(() => {
+              updateStatistics()
+              sessionStorage.removeItem("reader_text");
+              navigate("/");
+            }, 4000);
           }
         }
       }
@@ -444,9 +448,12 @@ export default function Reader() {
     } else {
 
       // TODO: instead go to "session complete" page
-      updateStatistics()
-      sessionStorage.removeItem("reader_text");
-      navigate("/");
+      triggerConfetti();
+      setTimeout(() => {
+        updateStatistics()
+        sessionStorage.removeItem("reader_text");
+        navigate("/");
+      }, 4000);
     }
   }
 
@@ -463,11 +470,14 @@ export default function Reader() {
 
   return (
     <div className={`reader-page ${theme === "dark" ? "dark-mode" : ""}`} style={{fontFamily: font}}>
+      <div id="finishReward" style={{top:"150px"}}/>
       <div className="reader-container" role="region" aria-label="Reading panel" aria-live="polite">
+        {settings.readMode && (
         <div className="words-per-minute">
           WPM <br />
           {wpm}
         </div>
+        )}
 
         <ReaderSettingsMenu
           readMode={settings.readMode}
@@ -519,29 +529,36 @@ export default function Reader() {
         </div>
 
         <div className="reader-footer">
-          <div className="reader-progress">
-            {chunks.length > 1 ? `${page + 1} / ${chunks.length}` : ""}
-          </div>
+          {settings.readMode && (
+            <>
+            <div className="reader-progress">
+              {chunks.length > 1 ? `${page + 1} / ${chunks.length}` : ""}
+            </div>
 
-          <div
-            className="progress"
-            role="progressbar"
-            aria-label="Reading progress"
-            aria-valuenow={progressBar}
-            aria-valuemin="0"
-            aria-valuemax="100"
-            style={{ "--bs-progress-bar-bg": "#38CB82" }}
-          >
             <div
-              className="progress-bar progress-bar-striped progress-bar-animated"
-              style={{ width: `${progressBar}%` }}
-            ></div>
-          </div>
+              className="progress"
+              role="progressbar"
+              aria-label="Reading progress"
+              aria-valuenow={progressBar}
+              aria-valuemin="0"
+              aria-valuemax="100"
+              style={{ "--bs-progress-bar-bg": "#38CB82" }}
+            >
+              <div
+                className="progress-bar progress-bar-striped progress-bar-animated"
+                style={{ width: `${progressBar}%` }}
+              ></div>
+            </div>
+            </>
+          )}
 
           <button type="button" className="reader-next" onClick={handleNext} aria-label={actionLabel}>
             {actionLabel}
           </button>
+
         </div>
+        <br></br>  
+        <div className="instructions" style={{}}>Space to continue</div>
       </div>
     </div>
   );
