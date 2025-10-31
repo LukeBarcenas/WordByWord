@@ -4,6 +4,7 @@ import "./Account.css";
 import Achievement from "../components/Achievement";
 import { ACHIEVEMENTS } from "../data/achievements";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { handleMostRecent } from "../helper-functions/handleMostRecent";
 
 const StatRow = ({ label, value, suffix }) => (
   <div className="d-flex justify-content-between align-items-baseline account-stat-row">
@@ -90,60 +91,77 @@ const Account = () => {
   const longestTextReadWords = (statistics.longest_text)
   const textsRead = (statistics.texts_read)
   const mostRecentAchievementLabel = "Most Recent Achievement"
+  let mostRecentAchievement = handleMostRecent(totalWordsRead, fastestWpm, textsRead, longestTextReadWords)
 
   let earnedAchievements = []
 
-  if(totalWordsRead >= 1000 && totalWordsRead < 5000) {
+  if(totalWordsRead >= 1000) {
 
     earnedAchievements.push("words_1k")
 
-  } else if(totalWordsRead >= 5000 && totalWordsRead < 10000) {
+  } 
+  
+  if(totalWordsRead >= 5000) {
 
     earnedAchievements.push("words_5k")
 
-  } else if(totalWordsRead >= 10000 && totalWordsRead < 50000) {
+  } 
+  
+  if(totalWordsRead >= 10000) {
 
     earnedAchievements.push("words_10k")
 
-  } else if(totalWordsRead >= 50000) {
+  } 
+
+  if(totalWordsRead >= 50000) {
 
     earnedAchievements.push("words_50k")
 
   }
 
-  if(fastestWpm < 50) {
+  if(fastestWpm < 50 && textsRead >= 1) {
 
     earnedAchievements.push("wpm_slow")
 
-  } else if (fastestWpm > 300) {
+  } 
+  
+  if (fastestWpm > 300 && textsRead >= 1) {
 
     earnedAchievements.push("wpm_fast")
 
   }
 
-  if(textsRead >= 1 && textsRead < 10) {
+  if(textsRead >= 1) {
 
     earnedAchievements.push("readings_1")
 
-  } else if(textsRead >= 10 && textsRead < 50) {
+  } 
+  
+  if(textsRead >= 10) {
 
     earnedAchievements.push("readings_10")
 
-  } else if(textsRead >= 50 && textsRead < 100) {
+  } 
+  
+  if(textsRead >= 50) {
 
     earnedAchievements.push("readings_50")
 
-  } else if(textsRead >= 100) {
+  } 
+  
+  if(textsRead >= 100) {
 
     earnedAchievements.push("readings_100")
 
   }
 
-  if(longestTextReadWords < 100) {
+  if(longestTextReadWords < 100 && textsRead >= 1) {
 
     earnedAchievements.push("length_short")
 
-  } else if (longestTextReadWords > 1000) {
+  } 
+  
+  if (longestTextReadWords > 1000 && textsRead >= 1) {
 
     earnedAchievements.push("length_long")
 
@@ -187,7 +205,7 @@ const Account = () => {
             <div className="account-mra-title">Most Recent Achievement:</div>
             <div className="account-most-recent-achievement mt-2" role="region" aria-label="Most recent achievement">
               {/* put most recent achievement here */}
-              <span>(None)</span>
+              <span>{mostRecentAchievement}</span>
             </div>
           </div>
         </div>

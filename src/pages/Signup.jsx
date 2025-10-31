@@ -17,10 +17,7 @@ export default function Signup() {
 
         e.preventDefault();
 
-
-        const text = emailText.trim() || passwordText.trim();
-
-        if(!emailText.trim() || !passwordText.trim() || (verifyText != passwordText)) {
+        if((verifyText != passwordText)) {
 
             return;
 
@@ -30,14 +27,29 @@ export default function Signup() {
 
     }
 
+    function handleLogin(e) {
+
+        e.preventDefault();
+        navigate("/login");
+        
+    }
+
     return (
-        <div className="login-container">
+        <div className="signup-container">
             <h1>CREATE ACCOUNT</h1>
             
             <form onSubmit={handleSubmit}>
                 <div className="input-group">
                     <label htmlFor="email">EMAIL</label>
                     <input type="email" id="email" placeholder="your@email.com" onChange={(e) => setEmailText(e.target.value)}/>
+                </div>
+
+                <div className="password-details">
+                    <span className="title">Password Requirements: </span><br />
+                    * Minimum Length: 5 characters <br />
+                    * At least 1 Uppercase Letter <br />
+                    * At least 1 Lowercase Letter <br />
+                    * At least 1 Number
                 </div>
                 
                 <div className="input-group">
@@ -50,9 +62,16 @@ export default function Signup() {
                     <input type="password" id="password" placeholder="••••••••" onChange={(e) => setVerifyText(e.target.value)}/>
                 </div>
                 
-                <button type="submit" disabled={isLoading}> SIGN UP </button>
+                <button type="submit" disabled={isLoading} className="signup-button"> SIGN UP </button>
 
                 {error && <div className="error"> {error} </div>}
+
+                <div className="login">
+                    Already have an account? 
+                    
+                    <button onClick={handleLogin} disabled={isLoading}> LOGIN </button>
+                    
+                </div>
             </form>
         </div>
     );

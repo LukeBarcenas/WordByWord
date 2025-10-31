@@ -5,29 +5,24 @@ import "../pages/Login.css";
 
 export default function Login() {
 
-    const [emailText, setEmailText] = useState();
-    const [passwordText, setPasswordText] = useState();
+    const [emailText, setEmailText] = useState()
+    const [passwordText, setPasswordText] = useState()
     const {login, error, isLoading} = useLogin()
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
 
         e.preventDefault();
-        const text = emailText.trim() || passwordText.trim();
-
-        if(!emailText.trim() || !passwordText.trim()) {
-
-            return;
-
-        } 
-
-        await login(emailText, passwordText)
+        
+        await login(emailText, passwordText)    
    
     }
 
     function handleSignup(e) {
+
         e.preventDefault();
         navigate("/signup");
+
     }
 
     return (
@@ -51,7 +46,7 @@ export default function Login() {
                 <div className="signup">
                     Don't have an account? 
                     
-                    <button onClick={handleSignup}> SIGN UP </button>
+                    <button onClick={handleSignup} disabled={isLoading}> SIGN UP </button>
                     
                 </div>
 
