@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
 import { useAuthContext } from "../hooks/useAuthContext";
+import acronym from '/src/logo.png';
 
 export default function Navbar() {
   const { pathname } = useLocation();
@@ -15,7 +16,8 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      <h2 className="logo">WordByWord</h2>
+      <img src={acronym} alt="acroynm" style={{ width: '85px', height: '37px' }}/>
+      <h2 className="logo" style={{ width: '70px', height: '37px' }}>WordByWord </h2>
       <ul>
         {user && (
           <li><Link to="/" className={pathname === "/" ? "active" : ""}>Home</Link></li>)}
@@ -24,7 +26,7 @@ export default function Navbar() {
         {!user && (
           <li><Link to="/login" className={pathname === "/login" ? "active" : ""}>Login</Link></li>)}
         {user && (<li>
-          <button onClick={handleLogout}> LOG OUT </button>
+          <button onClick={handleLogout}> Log Out </button>
         </li>)}
       </ul>
     </nav>

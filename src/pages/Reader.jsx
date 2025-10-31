@@ -3,6 +3,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import "../pages/Reader.css";
 import ReaderSettingsMenu from "../components/ReaderSettingsMenu";
 import { useReaderSettings } from "../settings/ReaderSettings";
+import { useReward } from 'react-rewards';
 
 // Splits text into 100 word chunks, rounded to the nearest end of a sentence
 function splitIntoChunks(text, maxWords = 100) {
@@ -74,6 +75,7 @@ export default function Reader() {
   const startTimeRef = useRef(null);
   const [theme, setTheme] = useState("light");
   const [font, setFont] = useState("Lexend");
+  const { reward: triggerConfetti, isAnimating } = useReward('finishReward', 'confetti');
 
   // Pull text from router state or sessionStorage so it stays after refreshing the page
   const text = (state?.text ?? sessionStorage.getItem("reader_text") ?? "").trim();
@@ -217,7 +219,7 @@ export default function Reader() {
 
         setWordCount((prev) => {
           const newCount = prev + 1;
-          const minutes = Math.max((new Date() - startTimeRef.current) / (60000), 0.001);
+          const minutes = Math.max((new Date() - startTimeRef.current) / (60000), 0.01);
 
           const newWpm = Math.round(newCount / minutes);
 
@@ -244,8 +246,12 @@ export default function Reader() {
             setPage((p) => p + 1);
             // Automatically start read mode on next page if possible
           } else {
-            sessionStorage.removeItem("reader_text");
-            navigate("/");
+            triggerConfetti();
+
+            setTimeout(() => {
+              sessionStorage.removeItem("reader_text");
+              navigate("/");
+            }, 4000);
           }
         }
       }
@@ -261,8 +267,12 @@ export default function Reader() {
       setPage((p) => p + 1);
     } else {
       // TODO: instead go to "session complete" page
-      sessionStorage.removeItem("reader_text");
-      navigate("/");
+      triggerConfetti();
+
+      setTimeout(() => {
+        sessionStorage.removeItem("reader_text");
+        navigate("/");
+      }, 4000);
     }
   }
 
@@ -279,6 +289,7 @@ export default function Reader() {
 
   return (
     <div className={`reader-page ${theme === "dark" ? "dark-mode" : ""}`} style={{fontFamily: font}}>
+      <div id="finishReward" style={{top:"150px"}}/>
       <div className="reader-container" role="region" aria-label="Reading panel" aria-live="polite">
         <div className="words-per-minute">
           WPM <br />

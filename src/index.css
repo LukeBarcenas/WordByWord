@@ -50,16 +50,22 @@ body.dark-mode {
   border-radius: 4px;
 }
 
-.navbar button {
+.navbar a:hover {
+  background-color: rgb(136, 143, 143);
+}
 
+.navbar button {
   color: white;
-  background-color: red;
+  background-color: #0066ff;
   border-radius: 8px;
   cursor: pointer;
+}
 
-
+.navbar button:hover {
+  background-color: #7babf3;
 }
 
 .navbar a.active {
   background: #363636;
 }
+

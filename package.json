@@ -12,6 +12,7 @@
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^18.3.1",
+    "react-rewards": "^2.1.0",
     "react-router-dom": "^6.30.1"
   },
   "devDependencies": {
