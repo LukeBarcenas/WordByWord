@@ -8,6 +8,22 @@
   font-size: 16px;
 }
 
+.home-description {
+  max-width: 90%;
+  margin: 0 auto 24px;
+  color: #333;
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: center;
+  opacity: 0.85;
+}
+
+.input-group {
+  max-width: 450px;
+  flex-wrap: nowrap;
+  margin-bottom: 16px;
+}
+
 /* Input field for text */
 .home-input {
   padding: 12px;
@@ -24,6 +40,8 @@
 }
 
 .home-button {
+  display: block;
+  width: fit-content;
   margin-top: 12px;
   padding: 10px 16px;
   font-size: 16px;

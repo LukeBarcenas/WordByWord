@@ -20,7 +20,7 @@ export default function Navbar() {
         {user && (
           <li><Link to="/" className={pathname === "/" ? "active" : ""}>Home</Link></li>)}
         {user && (
-          <li><Link to="/about" className={pathname === "/about" ? "active" : ""}>About</Link></li>)}
+          <li><Link to="/account" className={pathname === "/account" ? "active" : ""}>Account</Link></li>)}
         {!user && (
           <li><Link to="/login" className={pathname === "/login" ? "active" : ""}>Login</Link></li>)}
         {user && (<li>

@@ -34,7 +34,11 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      <h1>Home</h1>
+      <p className="home-description">
+        WordByWord turns any text you write or upload into a focused, word-by-word reading experience!  
+        Upload a file or paste your text below, and start reading in a way that helps you break a long piece
+        of text into an enjoyable reading experience.
+      </p>
       <form onSubmit={handleSubmit}>
         <label htmlFor="textInput" className="home-label">
           Input or upload your text:

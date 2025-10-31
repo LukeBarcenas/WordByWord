@@ -1,0 +1,153 @@
+.account-page {
+  max-width: 1200px;
+}
+
+.account-username {
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-size: 34px;
+}
+
+.account-achievements-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.account-mra-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.account-divider {
+  border: none;
+  height: 2px;
+  background-color: #dcdcdc;
+  margin: 10px 0 0 0;
+}
+
+.account-stats {
+  margin-top: 16px;
+}
+
+.account-stat-row {
+  padding: 10px 0;
+  border-bottom: 1px solid #efefef;
+}
+
+.account-stat-row:last-child {
+  border-bottom: none;
+}
+
+.account-stat-label {
+  font-size: 18px;
+  color: #222;
+}
+
+.account-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111;
+}
+
+.account-most-recent-achievement {
+  display: flex;
+  align-items: center;
+  height: 60px;
+  border-radius: 12px;
+  background: #e8e8e8;
+  padding: 0 16px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.05) inset;
+}
+
+/* Right side */
+.account-right-card {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  margin-left: 24px;
+}
+
+.account-achievements-scroll {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.account-achievement-item {
+  height: 90px;
+  border-radius: 12px;
+  background: #e3e3e3;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05) inset;
+}
+
+/* For achievement components */
+.achievement-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.achievement-icon {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.achievement-icon.fallback {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #d7d7d7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.achievement-title {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.1;
+  color: #121212;
+}
+
+.achievement-desc {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #444;
+  opacity: 0.9;
+}
+
+/* greyed out achievements */
+.achievement-icon.greyed {
+  opacity: 0.25;
+  filter: grayscale(100%);
+  transition: opacity 0.2s ease;
+}
+
+.achievement-icon.greyed:hover {
+  opacity: 0.5;
+}
+
+/* When the screen gets smaller */
+@media (max-width: 991px) {
+  .account-username {
+    font-size: 28px;
+  }
+  .account-stat-label {
+    font-size: 16px;
+  }
+  .account-stat-value {
+    font-size: 20px;
+  }
+}
