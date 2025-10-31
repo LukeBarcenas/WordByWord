@@ -1,4 +1,4 @@
-.login-container {
+.signup-container {
   width: 100%;
   max-width: 400px;
   border: 1px solid #000000;
@@ -11,7 +11,7 @@
   border-radius: 12px;
 }
 
-.login-container h1 {
+.signup-container h1 {
   color: #000000;
   margin-bottom: 30px;
   font-size: 28px;
@@ -24,14 +24,34 @@
   position: relative;
 }
 
-.login-container label {
+.password-details {
+
+  margin-bottom: 20px;
+
+}
+
+.password-details .title{
+
+  font-weight: 700;
+
+}
+
+.error {
+
+  margin-top: 15px;
+  color: rgb(255, 54, 54);
+  text-align: center;
+
+}
+
+.signup-container label {
   display: block;
   margin-bottom: 8px;
   font-weight: bold;
   color: #000000;
 }
 
-.login-container input {
+.signup-container input {
   width: 100%;
   padding: 12px 15px;
   border: 2px solid #000000;
@@ -41,11 +61,11 @@
   transition: all 0.3s;
 }
 
-.login-container input:focus {
+.signup-container input:focus {
   box-shadow: 4px 4px 0px #000000;
 }
 
-.login-container button {
+.signup-button {
   width: 100%;
   padding: 12px;
   background-color: #0078ff;
@@ -58,7 +78,38 @@
   transition: all 0.3s;
 }
 
-.login-container button:hover {
+.signup-button:hover {
   box-shadow: 4px 4px 0px #000000;
   transform: translate(-2px, -2px);
+}
+
+.login {
+
+  text-align: center;
+  margin-top: 20px;
+  color: #000000;
+  font-size: 0.95rem;
+
+}
+
+.login button {
+
+  background: none;
+  border: none;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  color: #000000;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0;
+  font-size: 1rem;
+
+}
+
+.login button:hover {
+
+  color: rgb(211, 52, 41);
+
 }

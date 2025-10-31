@@ -27,7 +27,7 @@ accountSchema.statics.signup = async function(email, password) {
 
     if(!email || !password) {
 
-        throw Error('Fields are null!')
+        throw Error('Fields cannot be empty!')
 
     }
 
@@ -37,7 +37,11 @@ accountSchema.statics.signup = async function(email, password) {
 
     }
 
-    if(!validator.isStrongPassword(password)) {
+    if(!validator.isStrongPassword(password,
+        {minLength: 5, minLowercase: 1, minUppercase: 1,
+            minNumbers: 1, minSymbols: 0  
+        }
+    )) {
 
         throw Error('Password is too weak!')
 
@@ -64,7 +68,7 @@ accountSchema.statics.login = async function(email, password) {
 
     if(!email || !password) {
 
-        throw Error('Fields are null!')
+        throw Error('Fields cannot be empty!')
 
     }
 
@@ -72,7 +76,7 @@ accountSchema.statics.login = async function(email, password) {
 
     if(!account) {
 
-        throw Error('Incorrect Email!')
+        throw Error('Email not found!')
 
     }
 

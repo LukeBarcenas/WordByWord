@@ -426,12 +426,14 @@ export default function Reader() {
 
             // Automatically start read mode on next page if possible
           } else {
+
             triggerConfetti();
             setTimeout(() => {
               updateStatistics()
               sessionStorage.removeItem("reader_text");
               navigate("/");
             }, 4000);
+
           }
         }
       }
@@ -447,13 +449,13 @@ export default function Reader() {
       setPage((p) => p + 1);
     } else {
 
-      // TODO: instead go to "session complete" page
       triggerConfetti();
       setTimeout(() => {
         updateStatistics()
         sessionStorage.removeItem("reader_text");
         navigate("/");
       }, 4000);
+
     }
   }
 
@@ -534,7 +536,6 @@ export default function Reader() {
             <div className="reader-progress">
               {chunks.length > 1 ? `${page + 1} / ${chunks.length}` : ""}
             </div>
-
             <div
               className="progress"
               role="progressbar"
@@ -557,8 +558,8 @@ export default function Reader() {
           </button>
 
         </div>
-        <br></br>  
-        <div className="instructions" style={{}}>Space to continue</div>
+        <br></br>
+        <div className="instructions" style={{}}>Press Space to continue</div>
       </div>
     </div>
   );
