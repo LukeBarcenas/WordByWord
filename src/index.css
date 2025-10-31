@@ -52,13 +52,24 @@ body.dark-mode {
 
 .navbar button {
 
-  color: white;
-  background-color: red;
-  border-radius: 8px;
-  cursor: pointer;
+  background-color: transparent;
+  border: 2px solid #ff4d4d;
+  color: #ff4d4d;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
 
 
 }
+
+.navbar button:hover {
+
+  background-color: #ff4d4d;
+  color: #fff;
+
+}
+
 
 .navbar a.active {
   background: #363636;

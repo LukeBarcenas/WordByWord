@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Account.css";
 import Achievement from "../components/Achievement";
 import { ACHIEVEMENTS } from "../data/achievements";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const StatRow = ({ label, value, suffix }) => (
   <div className="d-flex justify-content-between align-items-baseline account-stat-row">
@@ -14,19 +15,140 @@ const StatRow = ({ label, value, suffix }) => (
   </div>
 );
 
-const Account = ({ userData = {} }) => {
-  const {
-    // put actual user data here
-    username = "SuperReader42",
-    totalWordsRead = 14039,
-    averageWpm = 220,
-    fastestWpm = 301,
-    longestTextReadWords = 1036,
-    textsRead = 6,
-    mostRecentAchievementLabel = "Most Recent Achievement",
-    // instead of hardcoding, put the achievements the user has earned here
-    earnedAchievements = ["words_1k", "readings_1", "readings_100"], 
-  } = userData;
+const Account = () => {
+
+  const [statistics, setStatistics] = useState(null)
+  const {user} = useAuthContext()
+
+  useEffect(() => {
+
+    const fetchStatistics = async () => {
+
+      const response = await fetch('/api/statistic', {
+        headers: {
+
+          'Authorization': `Bearer ${user.token}`
+
+        }
+      })
+
+      const json = await response.json()
+
+      if(!json) {
+
+        const defaultStats = {
+          words_read: 0,
+          average_wpm: 0,
+          fastest_wpm: 0,
+          longest_text: 0,
+          texts_read: 0
+        }
+
+        const response = await fetch('/api/statistic', {
+        method: 'POST',
+        body: JSON.stringify(defaultStats),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+
+        }
+        })
+
+        if(response.ok) {
+          fetchStatistics()
+        }
+
+      }
+
+      if(response.ok) {
+
+        setStatistics(json)
+        
+      }
+
+    }
+
+    if(user) {
+
+      fetchStatistics()
+
+    }
+
+
+  }, [user])
+
+  if (!statistics) {
+
+    return <div></div>
+
+  }
+
+  const username = user.email
+  const totalWordsRead = (statistics.words_read)
+  const averageWpm = (statistics.average_wpm )
+  const fastestWpm = (statistics.fastest_wpm)
+  const longestTextReadWords = (statistics.longest_text)
+  const textsRead = (statistics.texts_read)
+  const mostRecentAchievementLabel = "Most Recent Achievement"
+
+  let earnedAchievements = []
+
+  if(totalWordsRead >= 1000 && totalWordsRead < 5000) {
+
+    earnedAchievements.push("words_1k")
+
+  } else if(totalWordsRead >= 5000 && totalWordsRead < 10000) {
+
+    earnedAchievements.push("words_5k")
+
+  } else if(totalWordsRead >= 10000 && totalWordsRead < 50000) {
+
+    earnedAchievements.push("words_10k")
+
+  } else if(totalWordsRead >= 50000) {
+
+    earnedAchievements.push("words_50k")
+
+  }
+
+  if(fastestWpm < 50) {
+
+    earnedAchievements.push("wpm_slow")
+
+  } else if (fastestWpm > 300) {
+
+    earnedAchievements.push("wpm_fast")
+
+  }
+
+  if(textsRead >= 1 && textsRead < 10) {
+
+    earnedAchievements.push("readings_1")
+
+  } else if(textsRead >= 10 && textsRead < 50) {
+
+    earnedAchievements.push("readings_10")
+
+  } else if(textsRead >= 50 && textsRead < 100) {
+
+    earnedAchievements.push("readings_50")
+
+  } else if(textsRead >= 100) {
+
+    earnedAchievements.push("readings_100")
+
+  }
+
+  if(longestTextReadWords < 100) {
+
+    earnedAchievements.push("length_short")
+
+  } else if (longestTextReadWords > 1000) {
+
+    earnedAchievements.push("length_long")
+
+  }
+  
 
   const formatNum = (n) =>
     typeof n === "number" ? n.toLocaleString() : n ?? "—";

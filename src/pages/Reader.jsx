@@ -3,6 +3,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import "../pages/Reader.css";
 import ReaderSettingsMenu from "../components/ReaderSettingsMenu";
 import { useReaderSettings } from "../settings/ReaderSettings";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 // Splits text into 100 word chunks, rounded to the nearest end of a sentence
 function splitIntoChunks(text, maxWords = 100) {
@@ -67,6 +68,67 @@ function splitIntoChunks(text, maxWords = 100) {
 }
 
 export default function Reader() {
+
+  const [statistics, setStatistics] = useState(null)
+  const {user} = useAuthContext()
+  
+    useEffect(() => {
+  
+      const fetchStatistics = async () => {
+  
+        const response = await fetch('/api/statistic', {
+          headers: {
+  
+            'Authorization': `Bearer ${user.token}`
+  
+          }
+        })
+  
+        const json = await response.json()
+  
+        if(!json) {
+  
+          const defaultStats = {
+            words_read: 0,
+            average_wpm: 0,
+            fastest_wpm: 0,
+            longest_text: 0,
+            texts_read: 0
+          }
+  
+          const response = await fetch('/api/statistic', {
+          method: 'POST',
+          body: JSON.stringify(defaultStats),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}`
+  
+          }
+          })
+  
+          if(response.ok) {
+            fetchStatistics()
+          }
+  
+        }
+  
+        if(response.ok) {
+  
+          setStatistics(json)
+          
+        }
+  
+      }
+  
+      if(user) {
+  
+        fetchStatistics()
+  
+      }
+  
+  
+    }, [user])
+
   const { state } = useLocation();
   const navigate = useNavigate();
   const [wpm, setWpm] = useState(0);
@@ -74,6 +136,81 @@ export default function Reader() {
   const startTimeRef = useRef(null);
   const [theme, setTheme] = useState("light");
   const [font, setFont] = useState("Lexend");
+  const [words_read, setWords_Read] = useState(null)
+  const [average_wpm, setAverage_WPM] = useState(null)
+  const [fastest_wpm, setFastest_WPM] = useState(null)
+  const [longest_text, setLongest_Text] = useState(null)
+  const [texts_read, setTexts_Read] = useState(null)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+
+    if (statistics) {
+      setWords_Read(statistics.words_read)
+      setAverage_WPM(statistics.average_wpm)
+      setFastest_WPM(statistics.fastest_wpm)
+      setLongest_Text(statistics.longest_text)
+      setTexts_Read(statistics.texts_read)
+    }
+}, [statistics])
+
+  const updateWords_Read = async () => {
+
+    const response = await fetch('/api/statistic', {
+
+      method: 'PATCH',
+      body: JSON.stringify({words_read: words_read}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${user.token}`
+      }
+
+    })
+
+    const json = await response.json()
+
+    if(!response.ok) {
+
+      setError(json.error)
+
+    } else {
+
+      setError(null)
+
+    }
+
+  }
+
+  const updateStatistics = async () => {
+
+    const statistic = {words_read, average_wpm, fastest_wpm, longest_text, texts_read}
+
+    console.log(statistic)
+
+    const response = await fetch('/api/statistic', {
+
+      method: 'PATCH',
+      body: JSON.stringify(statistic),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${user.token}`
+      }
+
+    })
+
+    const json = await response.json()
+
+    if(!response.ok) {
+
+      setError(json.error)
+
+    } else {
+
+      setError(null)
+
+    }
+
+  }
 
   // Pull text from router state or sessionStorage so it stays after refreshing the page
   const text = (state?.text ?? sessionStorage.getItem("reader_text") ?? "").trim();
@@ -193,9 +330,19 @@ export default function Reader() {
       // Left arrow on keyboard goes back a word
       if (e.key === "ArrowLeft") {
         e.preventDefault();
+
         if (settings.readMode && wordIndex !== null) {
           if (wordIndex > 0) {
             setWordIndex(wordIndex - 1);
+
+            setWords_Read(words_read - 1)
+
+            if(words_read < 0) {
+  
+              setWords_Read(0)
+
+            }
+
           }
           else if (page > 0) {
             setPage((p) => p - 1);
@@ -210,6 +357,8 @@ export default function Reader() {
       if (e.code === "Space" || e.key === " ") {
         e.preventDefault();
 
+        setWords_Read(words_read + 1)
+
         // WPM
         if (!startTimeRef.current) {
           startTimeRef.current = new Date();
@@ -222,6 +371,7 @@ export default function Reader() {
           const newWpm = Math.round(newCount / minutes);
 
           setWpm(newWpm);
+
           return newCount;
         });
 
@@ -236,14 +386,46 @@ export default function Reader() {
 
         // Moving to next words
         const nextIdx = (wordIndex ?? -1) + 1;
+          
         if (nextIdx < words.length) {
           setWordIndex(nextIdx);
+
+          if(nextIdx == words.length - 1 && page == (chunks.length - 1)) {
+
+            if(average_wpm != 0) {
+
+              setAverage_WPM(Math.round((wpm + average_wpm) / 2))
+
+            } else {
+
+              setAverage_WPM(Math.round(wpm))
+
+            }
+
+            if(wpm > fastest_wpm) {
+
+              setFastest_WPM(wpm)
+
+            }
+
+            setTexts_Read(texts_read + 1)
+
+            if(totalWords > longest_text) {
+              
+              setLongest_Text(totalWords)
+
+            }
+
+          }
         } else {
           // Checks if its at the end of the page. If so, go to next page
           if (page < chunks.length - 1) {
             setPage((p) => p + 1);
+
             // Automatically start read mode on next page if possible
           } else {
+
+            updateStatistics()
             sessionStorage.removeItem("reader_text");
             navigate("/");
           }
@@ -260,7 +442,9 @@ export default function Reader() {
     if (page < chunks.length - 1) {
       setPage((p) => p + 1);
     } else {
+
       // TODO: instead go to "session complete" page
+      updateStatistics()
       sessionStorage.removeItem("reader_text");
       navigate("/");
     }
