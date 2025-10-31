@@ -109,11 +109,12 @@ export default function ReaderSettings({
             </div>
 
             <label
-              className="text-label"
+              className="text-label" style={{ fontSize: "18px"}}
             >
               Appearance
             </label>
 
+            <div style={{ fontSize: "15px", display: "flex", flexDirection: "column", gap: "10px" }}>
             <Form.Select
               size="sm"
               value={font}
@@ -126,8 +127,6 @@ export default function ReaderSettings({
               <option value="Roboto">Roboto</option>
               <option value="Lato">Lato</option>
             </Form.Select>
-
-            <br></br>
 
             <div className="form-check form-check-inline">
               <input
@@ -157,6 +156,7 @@ export default function ReaderSettings({
               <label className="form-check-label" htmlFor="inlineRadio2">
                 Dark mode
               </label>
+            </div>
             </div>
 
             </div>  

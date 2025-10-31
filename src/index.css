@@ -32,7 +32,7 @@ body.dark-mode {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 32px;
+  padding: 14px 32px;
   background: #222;
   color: white;
 }
@@ -49,6 +49,11 @@ body.dark-mode {
   padding: 4px 8px;
   border-radius: 4px;
 }
+
+.navbar a:hover {
+  background-color: rgb(110, 110, 110);
+}
+
 
 .navbar button {
 
