@@ -277,3 +277,21 @@
 .reader-next:active {
   transform: translateY(1px);
 }
+
+.instructions {
+  margin-top: 15px;
+  margin-left: 400px;
+  transform: translate(-50%, -50%);
+  color: black;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.reader-page.dark-mode .instructions {
+  color: white;
+}
+
+.reward {
+  position: fixed;
+  margin-top: 140px;
+}

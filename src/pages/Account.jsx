@@ -184,6 +184,7 @@ const Account = () => {
       <div className="row g-4">
         {/* left side */}
         <div className="col-12 col-lg-7">
+          
           <h1 className="account-username mb-3">{username}</h1>
           <hr className="account-divider" />
 

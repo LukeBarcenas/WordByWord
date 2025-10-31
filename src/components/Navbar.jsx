@@ -17,7 +17,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <img src={acronym} alt="acroynm" style={{ width: '85px', height: '37px' }}/>
-      <h2 className="logo" style={{ textAlign: "center"}}>WordByWord</h2>
+      <h2 className="logo" style={user ? {marginLeft: "190px"} : {}}> WordByWord</h2>
       <ul>
         {user && (
           <li style={{marginTop: "10px" }}><Link to="/" className={pathname === "/" ? "active" : ""}>Home</Link></li>)}

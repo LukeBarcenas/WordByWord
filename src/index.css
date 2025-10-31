@@ -54,9 +54,7 @@ body.dark-mode {
   background-color: rgb(110, 110, 110);
 }
 
-
 .navbar button {
-
   background-color: transparent;
   border: 2px solid #ff4d4d;
   color: #ff4d4d;
@@ -64,8 +62,6 @@ body.dark-mode {
   border-radius: 6px;
   font-weight: 600;
   transition: all 0.2s ease-in-out;
-
-
 }
 
 .navbar button:hover {

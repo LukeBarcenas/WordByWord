@@ -45,7 +45,7 @@ export default function Home() {
       </p>
       <form onSubmit={handleSubmit}>
         <label htmlFor="textInput" className="home-label">
-          Input or upload your text:
+          Input or upload your text file:
         </label>
         <div className="input-group mb-3">
           <label className="input-group-text" htmlFor="inputGroupFile01">

@@ -144,6 +144,7 @@ export default function Reader() {
   const [longest_text, setLongest_Text] = useState(null)
   const [texts_read, setTexts_Read] = useState(null)
   const [error, setError] = useState(null)
+  const [showInstructions, setShowInstructions] = useState(true);
 
   useEffect(() => {
 
@@ -273,10 +274,18 @@ export default function Reader() {
 
   // When the page or read mode changes, reset the word index
   useEffect(() => {
-    if (settings.readMode && words.length > 0) {
-        setWordIndex(0);
-    } else {
+    if (!settings.readMode) {
       setWordIndex(null);
+      return;
+    }
+
+    if (words.length > 0) {
+      if (wordIndex === "end") {
+        setWordIndex(words.length - 1);
+      }
+      else {
+        setWordIndex(0);
+      }
     }
   }, [page, settings.readMode, words.length]);
 
@@ -349,7 +358,7 @@ export default function Reader() {
           else if (page > 0) {
             setPage((p) => p - 1);
             const words = (chunks[page - 1] ?? "").split(/\s+/);
-            setWordIndex(words.length - 1);
+            setWordIndex("end");
           }
         }
         return;
@@ -358,6 +367,10 @@ export default function Reader() {
       // Pressing space turns on word read mode
       if (e.code === "Space" || e.key === " ") {
         e.preventDefault();
+
+        if (showInstructions) {
+          setShowInstructions(false);
+        }
 
         setWords_Read(words_read + 1)
 
@@ -472,7 +485,7 @@ export default function Reader() {
 
   return (
     <div className={`reader-page ${theme === "dark" ? "dark-mode" : ""}`} style={{fontFamily: font}}>
-      <div id="finishReward" style={{top:"150px"}}/>
+      <div className="reward" id="finishReward"/>
       <div className="reader-container" role="region" aria-label="Reading panel" aria-live="polite">
         {settings.readMode && (
         <div className="words-per-minute">
@@ -558,8 +571,12 @@ export default function Reader() {
           </button>
 
         </div>
-        <br></br>
-        <div className="instructions" style={{}}>Press Space to continue</div>
+        {showInstructions && (
+        <div className={`instructions ${!showInstructions ? "hidden" : ""}`}>
+          Press <strong>space</strong> to continue <br></br>
+          Use <strong>left arrow</strong> to go back
+        </div>
+        )}
       </div>
     </div>
   );
