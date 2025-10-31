@@ -22,7 +22,7 @@ export default function Login() {
         } 
 
         await login(emailText, passwordText)
-        //navigate("/");
+   
     }
 
     function handleSignup(e) {

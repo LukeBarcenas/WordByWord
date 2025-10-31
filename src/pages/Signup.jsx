@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSignup } from "../hooks/useSignup";
 import "../pages/Signup.css";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function Signup() {
 
@@ -26,7 +27,7 @@ export default function Signup() {
         } 
 
         await signup(emailText, passwordText)
-        //navigate("/login");
+
     }
 
     return (

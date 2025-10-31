@@ -8,8 +8,8 @@ export const ACHIEVEMENTS = [
   { id: "words_50k",   title: "Bookworm",               description: "50000 words read",                icon: "badge_4" },
 
   // WPM
-  { id: "wpm-slow",  title: "Took my Time",           description: "Finished a reading with < 50 WPM", icon: "badge_5" },
-  { id: "wpm-fast",  title: "Fastest Reader Alive!",  description: "Finished a reading with > 300 WPM", icon: "badge_7" },
+  { id: "wpm_slow",  title: "Took my Time",           description: "Finished a reading with < 50 WPM", icon: "badge_5" },
+  { id: "wpm_fast",  title: "Fastest Reader Alive!",  description: "Finished a reading with > 300 WPM", icon: "badge_7" },
 
   // Finished readings
   { id: "readings_1",     title: "First Chapter",          description: "Finished your first reading",     icon: "badge" },
@@ -21,5 +21,5 @@ export const ACHIEVEMENTS = [
   { id: "length_short",   title: "What Kind of Story was That?",
                         description: "Finish a reading that’s less than 100 words",     icon: "badge_5" },
   { id: "length_long",    title: "Finished the Whole Novel!",
-                        description: "Finish reading a text that’s longer than 1000 words", icon: "badge_6" },
+                        description: "Finished reading a text that’s longer than 1000 words", icon: "badge_6" },
 ];

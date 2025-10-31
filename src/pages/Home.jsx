@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function Home() {
   const [inputText, setInputText] = useState("");
   const [uploadText, setText] = useState("");
   const navigate = useNavigate();
+  const {user} = useAuthContext()
 
-  function handleSubmit(e) {
+  const handleSubmit = async(e) => {
+
     e.preventDefault();
     const text = inputText.trim() || uploadText.trim();
     if (!text) return;
+
     sessionStorage.setItem("reader_text", text);
     navigate("/reader", { state: { text } });
   }
